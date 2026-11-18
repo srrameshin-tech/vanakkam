@@ -1,0 +1,13 @@
+{
+  "name": "Daily Wishes – Tamil & English",
+  "short_name": "Daily Wishes",
+  "description": "Daily Tamil and English good morning and good night wishes.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#172554",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
