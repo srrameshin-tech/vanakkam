@@ -38,7 +38,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <div class="meta">
       <span id="dateText"></span>
       <span id="timeText"></span>
-      <span class="number" id="dayNumber">#163</span>
+      <span class="number" id="dayNumber">#001</span>
     </div>
     <article class="card" aria-live="polite">
       <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
@@ -58,7 +58,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
   <footer>Daily Wishes · Tamil + English</footer>
 </main>
 <script>
-const startDate = new Date(Date.UTC(2026,10,12));
+const startDate = new Date(Date.UTC(2026,10,18));
 const morning = [
 ["புதிய விடியல் உங்கள் வாழ்வில் புதிய நம்பிக்கையையும் மகிழ்ச்சியையும் மலரச் செய்யட்டும். இன்று இனிய நாளாக அமையட்டும்! 🌸","May this new dawn bring fresh hope and happiness into your life. Have a beautiful day! 🌸"],
 ["முகத்தில் புன்னகையும், மனதில் மகிழ்ச்சியும் நிறையட்டும். உங்கள் நாள் இனிமையாகத் தொடங்கட்டும்! ☀️","May your face be filled with smiles and your heart with happiness. Have a lovely day! ☀️"],
@@ -77,13 +77,14 @@ let mode="morning", variation=0;
 const $=id=>document.getElementById(id);
 function dayCount(){
  const now=new Date(); const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
- return Math.max(1,163+Math.floor((today-startDate.getTime())/86400000));
+ return Math.max(1,1+Math.floor((today-startDate.getTime())/86400000));
 }
+function dayLabel(){return String(dayCount()).padStart(3,"0")}
 function updateClock(){
  const now=new Date();
  $("dateText").textContent=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  $("timeText").textContent=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
- $("dayNumber").textContent="#"+dayCount();
+ $("dayNumber").textContent="#"+dayLabel();
 }
 function render(){
  const list=mode==="morning"?morning:night, item=list[variation%list.length];
@@ -97,7 +98,7 @@ function makeMessage(){
  const list=mode==="morning"?morning:night, item=list[variation%list.length], now=new Date();
  const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
- return `${mode==="morning"?"🌅":"🌙"} *#${dayCount()}* | ${date} | ${time}\n\n*${mode==="morning"?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${mode==="morning"?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}`;
+ return `${mode==="morning"?"🌅":"🌙"} *#${dayLabel()}* | ${date} | ${time}\n\n*${mode==="morning"?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${mode==="morning"?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}`;
 }
 $("morningTab").onclick=()=>{mode="morning";variation=0;render()};
 $("nightTab").onclick=()=>{mode="night";variation=0;render()};
