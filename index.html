@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172554">
+<title>Daily Wishes – தமிழ் & English</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{color-scheme:light;--navy:#172554;--gold:#eabf65;--ink:#172033;--muted:#667085;--paper:#fff;--bg:#f4f6fb}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#e9eefb,#fbf7ef);font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif;color:var(--ink);min-height:100vh}
+main{max-width:560px;margin:auto;padding:22px 16px 40px}.top{text-align:center;padding:20px 10px 16px}.logo{font-size:36px}.top h1{margin:5px 0;color:var(--navy);font-size:27px;letter-spacing:.4px}.top p{margin:0;color:var(--muted);font-size:14px}
+.panel{background:var(--paper);border:1px solid #e6e9f1;border-radius:22px;padding:18px;box-shadow:0 12px 34px #17255412}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}.tab,button{border:0;border-radius:13px;padding:13px 12px;font:inherit;font-weight:650;cursor:pointer}.tab{background:#eef1f8;color:#344054}.tab.active{background:var(--navy);color:white}
+.meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;flex-wrap:wrap}.number{font-weight:750;color:var(--navy);background:#f3ead8;border-radius:999px;padding:5px 10px}
+.card{margin-top:16px;padding:22px 18px;border-radius:18px;background:linear-gradient(145deg,#fffaf0,#f4f6ff);border:1px solid #f0e6d3}
+.card h2{text-align:center;color:var(--navy);font-size:23px;margin:0 0 18px}.lang{font-weight:750;color:#9a6a18;font-size:13px;letter-spacing:.7px;margin:15px 0 7px}.message{font-size:17px;line-height:1.8;margin:0;white-space:pre-line}.english{font-size:15px;line-height:1.7}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.actions button{background:#eef1f8;color:var(--navy)}.actions .primary{background:var(--navy);color:white}.actions .wide{grid-column:1/-1}
+.note{text-align:center;color:var(--muted);font-size:12px;line-height:1.6;margin:16px 8px 0}
+.install{display:none;width:100%;margin-top:12px;background:#e8f1ff;color:#173b70}
+footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
+@media (max-width:380px){.actions{grid-template-columns:1fr}.actions .wide{grid-column:auto}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="logo">🌅 🌙</div>
+    <h1>DAILY WISHES</h1>
+    <p>தினமும் ஒரு இனிய செய்தி · Tamil & English</p>
+  </header>
+  <section class="panel">
+    <div class="tabs">
+      <button class="tab active" id="morningTab" type="button">🌅 காலை வணக்கம்</button>
+      <button class="tab" id="nightTab" type="button">🌙 இரவு வணக்கம்</button>
+    </div>
+    <div class="meta">
+      <span id="dateText"></span>
+      <span id="timeText"></span>
+      <span class="number" id="dayNumber">#163</span>
+    </div>
+    <article class="card" aria-live="polite">
+      <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
+      <div class="lang">தமிழ்</div>
+      <p class="message" id="tamilText"></p>
+      <div class="lang">ENGLISH</div>
+      <p class="message english" id="englishText"></p>
+    </article>
+    <div class="actions">
+      <button id="newBtn" type="button">🔄 புதிய செய்தி</button>
+      <button id="copyBtn" type="button">📋 Copy</button>
+      <button class="primary wide" id="shareBtn" type="button">📲 WhatsApp-ல் பகிரவும்</button>
+      <button class="wide" id="installBtn" type="button" style="display:none">⬇️ மொபைலில் Install செய்யவும்</button>
+    </div>
+    <p class="note">செய்தியை WhatsApp Status அல்லது விரும்பிய குழுவில் பகிரலாம். WhatsApp திறந்ததும் பெறுநர் / Status-ஐ நீங்களே தேர்வு செய்ய வேண்டும்.</p>
+  </section>
+  <footer>Daily Wishes · Tamil + English</footer>
+</main>
+<script>
+const startDate = new Date(Date.UTC(2026,10,12));
+const morning = [
+["புதிய விடியல் உங்கள் வாழ்வில் புதிய நம்பிக்கையையும் மகிழ்ச்சியையும் மலரச் செய்யட்டும். இன்று இனிய நாளாக அமையட்டும்! 🌸","May this new dawn bring fresh hope and happiness into your life. Have a beautiful day! 🌸"],
+["முகத்தில் புன்னகையும், மனதில் மகிழ்ச்சியும் நிறையட்டும். உங்கள் நாள் இனிமையாகத் தொடங்கட்டும்! ☀️","May your face be filled with smiles and your heart with happiness. Have a lovely day! ☀️"],
+["ஒவ்வொரு காலையும் ஒரு புதிய வாய்ப்பு. நம்பிக்கையுடன் தொடங்குங்கள்; இனிய நாள் உங்களுக்காக காத்திருக்கிறது! 🌻","Every morning is a new opportunity. Begin with hope and make today wonderful! 🌻"],
+["நல்ல எண்ணங்களுடன் நாளைத் தொடங்குங்கள். உங்கள் முயற்சிகள் அனைத்தும் நல்ல பலன் தரட்டும்! 🌼","Start your day with positive thoughts. May your efforts bring good results! 🌼"],
+["இன்றைய நாள் அன்பும் அமைதியும் மகிழ்ச்சியும் நிறைந்த அழகான நாளாக அமையட்டும்! 💐","May today be filled with love, peace, and happiness. Have a wonderful day! 💐"]
+];
+const night = [
+["நாளின் கவலைகளை மறந்து நிம்மதியாக உறங்குங்கள். உங்கள் இரவு அமைதியாகவும் கனவுகள் இனிமையாகவும் அமையட்டும்! 🌙","Leave behind the worries of the day and sleep peacefully. May your night be calm and your dreams sweet! 🌙"],
+["மனதிற்கு அமைதியும், இதயத்திற்கு மகிழ்ச்சியும் கிடைக்கட்டும். இனிய இரவு வணக்கம்! ✨","May your mind find peace and your heart find happiness. Have a peaceful good night! ✨"],
+["இன்றைய நாள் முடிந்தது; நாளை ஒரு புதிய தொடக்கம். நிம்மதியாக உறங்கி இனிய கனவுகளுடன் விழித்தெழுங்கள்! 🌟","Today has ended; tomorrow brings a fresh beginning. Sleep well and wake up to beautiful dreams! 🌟"],
+["இனிய நினைவுகளுடன் இன்றைய நாளை நிறைவு செய்யுங்கள். உங்கள் இரவு நிம்மதியாக அமையட்டும்! 🌹","End the day with beautiful thoughts. Wishing you a restful and peaceful night! 🌹"],
+["எல்லா கவலைகளையும் ஒதுக்கி வைத்து மனநிறைவுடன் உறங்குங்கள். இனிய இரவு, இனிய கனவுகள்! 💤","Set your worries aside and sleep with a peaceful heart. Good night and sweet dreams! 💤"]
+];
+let mode="morning", variation=0;
+const $=id=>document.getElementById(id);
+function dayCount(){
+ const now=new Date(); const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+ return Math.max(1,163+Math.floor((today-startDate.getTime())/86400000));
+}
+function updateClock(){
+ const now=new Date();
+ $("dateText").textContent=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
+ $("timeText").textContent=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
+ $("dayNumber").textContent="#"+dayCount();
+}
+function render(){
+ const list=mode==="morning"?morning:night, item=list[variation%list.length];
+ $("greeting").textContent=mode==="morning"?"🌅 காலை வணக்கம்!":"🌙 இரவு வணக்கம்!";
+ $("tamilText").textContent=item[0]; $("englishText").textContent=item[1];
+ $("morningTab").classList.toggle("active",mode==="morning");
+ $("nightTab").classList.toggle("active",mode==="night");
+ updateClock();
+}
+function makeMessage(){
+ const list=mode==="morning"?morning:night, item=list[variation%list.length], now=new Date();
+ const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
+ const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
+ return `${mode==="morning"?"🌅":"🌙"} *#${dayCount()}* | ${date} | ${time}\n\n*${mode==="morning"?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${mode==="morning"?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}`;
+}
+$("morningTab").onclick=()=>{mode="morning";variation=0;render()};
+$("nightTab").onclick=()=>{mode="night";variation=0;render()};
+$("newBtn").onclick=()=>{variation++;render()};
+async function copyText(text){
+ try{
+  const ta=document.createElement("textarea");
+  ta.value=text;ta.setAttribute("readonly","");
+  ta.style.cssText="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px";
+  document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,text.length);
+  const ok=document.execCommand("copy");
+  document.body.removeChild(ta);
+  if(ok)return true;
+ }catch(e){console.warn(e)}
+ try{
+  if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return true}
+ }catch(e){console.warn(e)}
+ try{
+  if(navigator.share){await navigator.share({text});return true}
+ }catch(e){console.warn(e)}
+ return false;
+}
+$("copyBtn").onclick=async()=>{
+ const b=$("copyBtn");
+ const ok=await copyText(makeMessage());
+ b.textContent=ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்";
+ setTimeout(()=>b.textContent="📋 Copy",ok?1500:2500);
+};
+$("shareBtn").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent(makeMessage())};
+let installPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").style.display="block"});
+$("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome மெனுவில் 'Add to Home screen' என்பதைத் தேர்வு செய்யவும்.");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").style.display="none"};
+if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+render();setInterval(updateClock,30000);
+</script>
+</body>
+</html>
