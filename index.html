@@ -59,20 +59,103 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
 </main>
 <script>
 const startDate = new Date(Date.UTC(2026,10,18));
-const morning = [
-["புதிய விடியல் உங்கள் வாழ்வில் புதிய நம்பிக்கையையும் மகிழ்ச்சியையும் மலரச் செய்யட்டும். இன்று இனிய நாளாக அமையட்டும்! 🌸","May this new dawn bring fresh hope and happiness into your life. Have a beautiful day! 🌸"],
-["முகத்தில் புன்னகையும், மனதில் மகிழ்ச்சியும் நிறையட்டும். உங்கள் நாள் இனிமையாகத் தொடங்கட்டும்! ☀️","May your face be filled with smiles and your heart with happiness. Have a lovely day! ☀️"],
-["ஒவ்வொரு காலையும் ஒரு புதிய வாய்ப்பு. நம்பிக்கையுடன் தொடங்குங்கள்; இனிய நாள் உங்களுக்காக காத்திருக்கிறது! 🌻","Every morning is a new opportunity. Begin with hope and make today wonderful! 🌻"],
-["நல்ல எண்ணங்களுடன் நாளைத் தொடங்குங்கள். உங்கள் முயற்சிகள் அனைத்தும் நல்ல பலன் தரட்டும்! 🌼","Start your day with positive thoughts. May your efforts bring good results! 🌼"],
-["இன்றைய நாள் அன்பும் அமைதியும் மகிழ்ச்சியும் நிறைந்த அழகான நாளாக அமையட்டும்! 💐","May today be filled with love, peace, and happiness. Have a wonderful day! 💐"]
+const Am = [
+["புதிய விடியல் புதிய நம்பிக்கையைத் தருகிறது.","A new dawn brings fresh hope."],
+["ஒவ்வொரு காலையும் ஒரு புதிய வாய்ப்பு.","Every morning is a new opportunity."],
+["சூரிய ஒளி போல உங்கள் மனமும் பிரகாசிக்கட்டும்.","Like the sunlight, may your heart shine bright."],
+["இன்றைய நாள் இறைவன் தந்த அழகான பரிசு.","Today is a beautiful gift from God."],
+["நேற்றைய கவலைகளை மறந்து இன்றைய நாளை வரவேற்போம்.","Let us leave yesterday's worries behind and welcome today."],
+["புன்னகையுடன் தொடங்கும் நாள் இனிமையாக அமையும்.","A day that begins with a smile turns out sweet."],
+["நல்ல எண்ணங்களே நல்ல நாளின் தொடக்கம்.","Good thoughts are the beginning of a good day."],
+["அதிகாலைக் காற்றும் பறவைகளின் பாடலும் மனதிற்கு இதம் தரும்.","The morning breeze and the birdsong bring comfort to the mind."],
+["இன்று நீங்கள் எடுக்கும் சிறு முயற்சியும் பெரிய வெற்றியாக மாறும்.","Even a small effort you make today can grow into a big success."],
+["நம்பிக்கையுடன் எடுத்து வைக்கும் முதல் அடியே வெற்றியின் தொடக்கம்.","The first step taken with faith is the start of success."],
+["அன்பான சொற்களோடு தொடங்கும் காலை அனைவருக்கும் மகிழ்ச்சி தரும்.","A morning that starts with kind words brings joy to everyone."],
+["இந்த அழகான காலை உங்களுக்காகவே மலர்ந்துள்ளது.","This beautiful morning has bloomed just for you."],
+["பொறுமையும் நம்பிக்கையும் இருந்தால் எந்த நாளும் இனிமையே.","With patience and faith, every day is a good day."],
+["இன்றைய நாள் ஒரு புதிய பக்கம், அதில் அழகான நினைவுகளை எழுதுங்கள்.","Today is a fresh page, so write beautiful memories on it."],
+["குடும்பத்தோடு பகிரும் காலைப் பொழுது மிகவும் இனிமையானது.","A morning shared with family is truly sweet."],
+["நன்றியுணர்வோடு கண் விழிப்பதே நாளின் முதல் வெற்றி.","Waking up with gratitude is the first victory of the day."],
+["இன்று மலரும் ஒவ்வொரு பூவும் உங்களுக்கு வாழ்த்து சொல்கிறது.","Every flower that blooms today sends you its wishes."],
+["அமைதியான மனமே அழகான நாளின் அடிப்படை.","A calm mind is the foundation of a beautiful day."],
+["உழைப்பவர்களுக்கு ஒவ்வொரு காலையும் ஒரு புதிய தொடக்கம்.","For those who work hard, every morning is a new beginning."]
 ];
-const night = [
-["நாளின் கவலைகளை மறந்து நிம்மதியாக உறங்குங்கள். உங்கள் இரவு அமைதியாகவும் கனவுகள் இனிமையாகவும் அமையட்டும்! 🌙","Leave behind the worries of the day and sleep peacefully. May your night be calm and your dreams sweet! 🌙"],
-["மனதிற்கு அமைதியும், இதயத்திற்கு மகிழ்ச்சியும் கிடைக்கட்டும். இனிய இரவு வணக்கம்! ✨","May your mind find peace and your heart find happiness. Have a peaceful good night! ✨"],
-["இன்றைய நாள் முடிந்தது; நாளை ஒரு புதிய தொடக்கம். நிம்மதியாக உறங்கி இனிய கனவுகளுடன் விழித்தெழுங்கள்! 🌟","Today has ended; tomorrow brings a fresh beginning. Sleep well and wake up to beautiful dreams! 🌟"],
-["இனிய நினைவுகளுடன் இன்றைய நாளை நிறைவு செய்யுங்கள். உங்கள் இரவு நிம்மதியாக அமையட்டும்! 🌹","End the day with beautiful thoughts. Wishing you a restful and peaceful night! 🌹"],
-["எல்லா கவலைகளையும் ஒதுக்கி வைத்து மனநிறைவுடன் உறங்குங்கள். இனிய இரவு, இனிய கனவுகள்! 💤","Set your worries aside and sleep with a peaceful heart. Good night and sweet dreams! 💤"]
+const Bm = [
+["இன்று இனிய நாளாக அமையட்டும்! 🌸","Have a beautiful day! 🌸"],
+["உங்கள் முயற்சிகள் அனைத்தும் வெற்றி பெறட்டும்! 🌼","May all your efforts meet with success! 🌼"],
+["உங்கள் இல்லத்தில் மகிழ்ச்சி நிறையட்டும்! 🏡","May your home be filled with happiness! 🏡"],
+["இறைவன் அருள் எப்போதும் உங்களுடன் இருக்கட்டும்! 🙏","May God's grace always be with you! 🙏"],
+["நல்ல ஆரோக்கியமும் நிம்மதியும் உங்களுக்குக் கிடைக்கட்டும்! 🌿","May you be blessed with good health and peace! 🌿"],
+["இன்றைய நாள் உங்களுக்கு நல்ல செய்திகளைக் கொண்டு வரட்டும்! 🌟","May today bring you good news! 🌟"],
+["அன்பும் அமைதியும் உங்கள் வாழ்வில் பெருகட்டும்! 💐","May love and peace grow in your life! 💐"],
+["எல்லா நாட்களும் இப்படியே இனிமையாக இருக்கட்டும்! 😊","May all your days be this sweet! 😊"],
+["உங்கள் கனவுகள் நனவாகட்டும்! ✨","May your dreams come true! ✨"],
+["உங்களுக்கு மனநிறைவான நாளாக அமையட்டும்! ☀️","Wishing you a fulfilling day! ☀️"],
+["நல்ல மனிதர்களின் சந்திப்பு இன்று உங்களுக்கு வாய்க்கட்டும்! 🤝","May you meet good people today! 🤝"],
+["உங்கள் முகத்தில் புன்னகை நிலைத்திருக்கட்டும்! 😄","May the smile stay on your face! 😄"],
+["இன்று செய்யும் வேலைகள் எல்லாம் எளிதாக முடியட்டும்! 💪","May everything you do today go smoothly! 💪"],
+["செல்வமும் செழிப்பும் உங்கள் வீட்டில் நிறையட்டும்! 🌾","May wealth and prosperity fill your home! 🌾"],
+["நம்பிக்கையுடன் முன்னேறுங்கள், வெற்றி உங்களுக்கே! 🌞","Move forward with confidence, success is yours! 🌞"],
+["உங்கள் நாள் சிரிப்பும் மகிழ்ச்சியும் நிறைந்ததாக இருக்கட்டும்! 🌻","May your day be full of laughter and joy! 🌻"],
+["இனிய காலை வணக்கம், இன்றைய நாள் உங்களுடையது! 🌅","Good morning, today belongs to you! 🌅"],
+["உங்கள் அன்புக்குரியவர்கள் அனைவரும் நலமாக இருக்கட்டும்! 💖","May all your loved ones be well! 💖"],
+["ஒவ்வொரு தருணமும் உங்களுக்கு இனிமையாக அமையட்டும்! 🌺","May every moment be sweet for you! 🌺"],
+["இன்று உங்கள் மனம் அமைதியில் நிறையட்டும்! 🕊️","May your heart be filled with peace today! 🕊️"],
+["நல்லதே நடக்கட்டும், நன்மையே விளையட்டும்! 🍀","May only good things happen and good come of it! 🍀"],
+["இந்த நாள் உங்கள் வாழ்வில் ஒரு இனிய நினைவாக மாறட்டும்! 🌷","May this day become a sweet memory in your life! 🌷"],
+["இனிய நாள் வாழ்த்துகள்! 💐","Wishing you a lovely day! 💐"]
 ];
+const An = [
+["நாளின் கவலைகளை மறந்து மனதை அமைதியாக்கும் நேரம் இது.","It is time to let go of the day's worries and calm your mind."],
+["இன்றைய நாள் இனிமையாக முடிந்தது, இறைவனுக்கு நன்றி.","Today has come to a sweet end, thank God."],
+["அமைதியான இரவு மனதிற்கு நல்ல ஓய்வு தரும்.","A quiet night gives the mind good rest."],
+["நிலவின் ஒளி போல உங்கள் மனமும் குளிர்ச்சியாக இருக்கட்டும்.","Like the moonlight, may your heart stay cool and calm."],
+["இன்று செய்த முயற்சிகளுக்காக உங்களை நீங்களே பாராட்டுங்கள்.","Appreciate yourself for the efforts you made today."],
+["நாளை என்பது ஒரு புதிய தொடக்கம்.","Tomorrow is a fresh beginning."],
+["நன்றியுணர்வோடு இந்த நாளை நிறைவு செய்வோம்.","Let us close this day with gratitude."],
+["இரவின் அமைதி மனதிற்கு ஆறுதல் தரும்.","The calm of the night brings comfort to the heart."],
+["மனம் லேசானால் உறக்கம் தானாக வரும்.","When the mind is light, sleep comes by itself."],
+["வானில் மின்னும் நட்சத்திரங்கள் உங்களுக்கு நம்பிக்கை சொல்கின்றன.","The twinkling stars in the sky whisper hope to you."],
+["ஒரு நாளின் களைப்பை இரவின் உறக்கமே போக்கும்.","Only the night's sleep can wash away a day's tiredness."],
+["இன்று கற்றுக்கொண்ட பாடங்கள் நாளைய பலமாகும்.","Lessons learned today become tomorrow's strength."],
+["குடும்பத்தோடு கழித்த இந்த நாள் மனதிற்கு நிறைவு தருகிறது.","A day spent with family brings fulfillment to the heart."],
+["அன்பான நினைவுகளோடு உறங்கச் செல்வது ஒரு வரம்.","Going to sleep with loving memories is a blessing."],
+["நல்ல உறக்கம் நாளைய உற்சாகத்தின் ரகசியம்.","Good sleep is the secret of tomorrow's energy."],
+["கடந்தது கடந்ததாகவே இருக்கட்டும், நாளை நமக்காகக் காத்திருக்கிறது.","Let the past stay in the past; tomorrow is waiting for us."],
+["எல்லாம் நன்மைக்கே என்ற நம்பிக்கையுடன் கண்களை மூடுங்கள்.","Close your eyes with the faith that everything happens for the best."],
+["ஓய்வும் வாழ்க்கையின் அழகான ஒரு பகுதி.","Rest is also a beautiful part of life."],
+["இந்த இரவு உங்கள் மனதிற்குப் புத்துணர்ச்சி தரும்.","This night will refresh your mind."]
+];
+const Bn = [
+["இனிய இரவு வணக்கம்! 🌙","Good night! 🌙"],
+["நிம்மதியாக உறங்குங்கள், இனிய கனவுகள் காணுங்கள்! ✨","Sleep peacefully and have sweet dreams! ✨"],
+["இறைவன் அருள் உங்களைக் காக்கட்டும்! 🙏","May God's grace protect you! 🙏"],
+["உங்கள் இரவு அமைதியாக அமையட்டும்! 🌟","May your night be peaceful! 🌟"],
+["நாளை புதிய உற்சாகத்தோடு விழித்தெழுங்கள்! 🌅","Wake up tomorrow with fresh energy! 🌅"],
+["எல்லா கவலைகளும் விலகி மனம் நிம்மதி அடையட்டும்! 💤","May all worries fade and your heart find peace! 💤"],
+["உங்கள் வீட்டில் அமைதி நிலவட்டும்! 🏡","May peace prevail in your home! 🏡"],
+["நலமோடு உறங்கி நலமோடு எழுந்திருங்கள்! 🌿","Sleep well and wake up well! 🌿"],
+["இன்றைய இரவு உங்களுக்கு இனிய ஓய்வைத் தரட்டும்! 🌛","May tonight give you sweet rest! 🌛"],
+["உங்கள் கனவுகள் அனைத்தும் அழகாக இருக்கட்டும்! 💫","May all your dreams be beautiful! 💫"],
+["குடும்பத்தோடு அன்பும் மகிழ்ச்சியும் பெருகட்டும்! 💖","May love and happiness grow with your family! 💖"],
+["நல்லிரவு, நாளை சந்திப்போம்! 😊","Good night, see you tomorrow! 😊"],
+["நிம்மதியான உறக்கம் உங்களுக்கு வாய்க்கட்டும்! 😴","May you be blessed with peaceful sleep! 😴"],
+["நாளைய நாள் இன்றைவிட இனிமையாக அமையட்டும்! 🌻","May tomorrow be even sweeter than today! 🌻"],
+["இனிய இரவு, இனிய கனவுகள்! 🌹","Sweet night, sweet dreams! 🌹"],
+["மனதில் அமைதி, கண்களில் உறக்கம் நிறையட்டும்! 🕊️","May peace fill your heart and sleep fill your eyes! 🕊️"],
+["உங்கள் அன்புக்குரியவர்கள் அனைவருக்கும் இனிய இரவு! 💐","A good night to all your loved ones! 💐"],
+["நட்சத்திரங்கள் உங்கள் கனவுகளுக்குக் காவலாக இருக்கட்டும்! ⭐","May the stars watch over your dreams! ⭐"],
+["நல்லதே நடக்கும் என்ற நம்பிக்கையுடன் உறங்குங்கள்! 🍀","Sleep with faith that good things will come! 🍀"],
+["இன்றைய களைப்பு நீங்கி நாளை புத்துணர்ச்சி பிறக்கட்டும்! 🌼","May today's tiredness fade and fresh energy be born tomorrow! 🌼"],
+["அமைதியும் ஆனந்தமும் உங்கள் இரவை நிறைக்கட்டும்! 🌌","May calm and joy fill your night! 🌌"],
+["இறைவனை நினைத்து நிம்மதியாகத் துயில்வோம்! ✨","Let us rest in peace, remembering God! ✨"],
+["இனிய இரவு வாழ்த்துகள்! 🌙","Wishing you a pleasant night! 🌙"]
+];
+function pickItem(){
+ const idx=dayCount()-1+variation, S=mode==="morning"?[Am,Bm]:[An,Bn];
+ const a=S[0][idx%S[0].length], b=S[1][idx%S[1].length];
+ return [a[0]+" "+b[0], a[1]+" "+b[1]];
+}
 let mode="morning", variation=0;
 const $=id=>document.getElementById(id);
 function dayCount(){
@@ -87,7 +170,7 @@ function updateClock(){
  $("dayNumber").textContent="#"+dayLabel();
 }
 function render(){
- const list=mode==="morning"?morning:night, item=list[variation%list.length];
+ const item=pickItem();
  $("greeting").textContent=mode==="morning"?"🌅 காலை வணக்கம்!":"🌙 இரவு வணக்கம்!";
  $("tamilText").textContent=item[0]; $("englishText").textContent=item[1];
  $("morningTab").classList.toggle("active",mode==="morning");
@@ -95,12 +178,11 @@ function render(){
  updateClock();
 }
 function makeMessage(){
- const list=mode==="morning"?morning:night, item=list[variation%list.length], now=new Date();
+ const item=pickItem(), now=new Date();
  const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
- const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(x=>[x.type,x.value]));
- const dateEn=`${P.weekday}, ${P.day} ${P.month} ${P.year}`;
- return `${mode==="morning"?"🌅":"🌙"} *#${dayLabel()}* | ${date} | ${time}\n\n*${mode==="morning"?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*#${dayLabel()}* | ${dateEn} | ${time}\n\n*${mode==="morning"?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}`;
+ const LN="━━━━━━━━━━━━━━", M=mode==="morning";
+ return `${M?"🌅":"🌙"} *#${dayLabel()}* | ${date} | ${time}\n${LN}\n\n*${M?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${M?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}\n\n${LN}\n🙏 _Ramesh, Coimbatore_`;
 }
 $("morningTab").onclick=()=>{mode="morning";variation=0;render()};
 $("nightTab").onclick=()=>{mode="night";variation=0;render()};
@@ -133,7 +215,9 @@ $("shareBtn").onclick=()=>{location.href="https://wa.me/?text="+encodeURICompone
 let installPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").style.display="block"});
 $("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome மெனுவில் 'Add to Home screen' என்பதைத் தேர்வு செய்யவும்.");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").style.display="none"};
-if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+ let hadCtl=!!navigator.serviceWorker.controller,reloaded=false;
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{if(hadCtl&&!reloaded){reloaded=true;location.reload()}hadCtl=true})}
 render();setInterval(updateClock,30000);
 </script>
 </body>
