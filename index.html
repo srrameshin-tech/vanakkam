@@ -211,7 +211,7 @@ function makeMessage(){
  const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
  const LN="━━━━━━━━━━━━━━", M=mode==="morning";
- return `${M?"🌅":"🌙"} *#${dayLabel()}* | ${date} | ${time}\n${LN}\n\n*${M?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${M?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}\n\n${LN}\n🙏 _Ramesh, Coimbatore_`;
+ return `${M?"🌅":"🌙"} *#${dayLabel()}* | ${date} | ${time}\n${LN}\n\n*${M?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${M?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}\n\n${LN}\n🙏 *Ramesh, Coimbatore*`;
 }
 $("morningTab").onclick=()=>{mode="morning";variation=0;render()};
 $("nightTab").onclick=()=>{mode="night";variation=0;render()};
