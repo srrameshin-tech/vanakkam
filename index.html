@@ -22,6 +22,15 @@ main{max-width:560px;margin:auto;padding:22px 16px 40px}.top{text-align:center;p
 footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
 @media (max-width:380px){.actions{grid-template-columns:1fr}.actions .wide{grid-column:auto}}
 .sent{margin-top:12px;text-align:center;font-weight:700;color:#0a7a3c;background:#e7f7ee;border-radius:12px;padding:9px;font-size:14px;cursor:pointer}
+.fest{margin-top:12px;text-align:center;font-weight:700;color:#b45309;background:#fff4e0;border-radius:12px;padding:9px;font-size:14px}
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;align-items:center;justify-content:center;padding:14px}
+.sheet{background:#fff;border-radius:20px;padding:16px;width:100%;max-width:520px;max-height:92vh;overflow:auto}
+.sheet h3{margin:0 0 10px;color:var(--navy);font-size:18px}
+.sheet textarea{width:100%;min-height:46vh;font:inherit;font-size:16px;line-height:1.6;border:1px solid #d0d5dd;border-radius:12px;padding:10px}
+.sheet label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.sheet input[type=text]{width:100%;font:inherit;font-size:16px;border:1px solid #d0d5dd;border-radius:12px;padding:11px}
+.sheet .chk{display:flex;align-items:center;gap:9px;font-size:15px;color:var(--ink)}
+.sheet .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.sheet .row button{background:#eef1f8;color:var(--navy)}
 </style>
 </head>
 <body>
@@ -42,6 +51,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
       <span class="number" id="dayNumber">#001</span>
     </div>
     <div class="sent" id="sentNote" style="display:none"></div>
+    <div class="fest" id="festNote" style="display:none"></div>
     <article class="card" aria-live="polite">
       <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
       <div class="lang">தமிழ்</div>
@@ -54,6 +64,8 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
       <button id="copyBtn" type="button">📋 Copy</button>
       <button id="imgBtn" type="button">🖼️ படமாகப் பகிர</button>
       <button id="saveBtn" type="button">💾 படம் Save</button>
+      <button id="editBtn" type="button">✏️ திருத்து</button>
+      <button id="settingsBtn" type="button">⚙️ Settings</button>
       <button class="primary wide" id="shareBtn" type="button">📲 WhatsApp-ல் பகிரவும்</button>
       <button class="wide" id="installBtn" type="button" style="display:none">⬇️ மொபைலில் Install செய்யவும்</button>
     </div>
@@ -61,6 +73,20 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
   </section>
   <footer>Daily Wishes · Tamil + English</footer>
 </main>
+<div class="ov" id="ov" style="display:none">
+  <div class="sheet" id="editSheet" style="display:none">
+    <h3>✏️ செய்தியைத் திருத்து</h3>
+    <textarea id="editArea"></textarea>
+    <div class="row"><button id="edCopy" type="button">📋 Copy</button><button id="edShare" type="button">📲 WhatsApp</button><button id="edReset" type="button">↩️ மீட்டமை</button><button id="edClose" type="button">✖ மூடு</button></div>
+  </div>
+  <div class="sheet" id="setSheet" style="display:none">
+    <h3>⚙️ Settings</h3>
+    <label for="setName">பெயர்</label><input type="text" id="setName" maxlength="40">
+    <label for="setCity">ஊர்</label><input type="text" id="setCity" maxlength="40">
+    <label class="chk"><input type="checkbox" id="setFoot"> செய்தியின் கடைசியில் பெயர் காட்டு</label>
+    <div class="row"><button id="setSave" type="button">💾 Save</button><button id="setClose" type="button">✖ மூடு</button></div>
+  </div>
+</div>
 <script>
 const startDate = new Date(Date.UTC(2026,10,18));
 const Am = [
@@ -189,6 +215,39 @@ function pickItem(){
  const a=S[0][idx%S[0].length], b=S[1][idx%S[1].length];
  return [a[0]+" "+b[0], a[1]+" "+b[1]];
 }
+/* ---- festival messages (dates checked against Tamil Nadu govt holiday lists 2026-2027) ---- */
+const FEST={
+"01-01":{t:["புத்தாண்டு நல்வாழ்த்துகள்!","HAPPY NEW YEAR!"],x:["புதிய ஆண்டு உங்கள் வாழ்வில் ஆரோக்கியம், மகிழ்ச்சி, வெற்றி அனைத்தையும் கொண்டு வரட்டும். 🎉","May the new year bring you health, happiness and success in everything you do. 🎉"]},
+"01-15":{t:["பொங்கல் நல்வாழ்த்துகள்!","HAPPY PONGAL!"],x:["இந்தப் பொங்கல் உங்கள் இல்லத்தில் இன்பமும் செழிப்பும் பொங்கி வழியட்டும். பொங்கலோ பொங்கல்! 🌾","May this Pongal overflow your home with joy and prosperity. Pongalo Pongal! 🌾"]},
+"01-16":{t:["மாட்டுப் பொங்கல் வாழ்த்துகள்!","HAPPY MATTU PONGAL!"],x:["நமக்காக உழைக்கும் கால்நடைகளுக்கு நன்றி சொல்லும் இந்த நாளில், திருவள்ளுவரின் நல்வழியில் நடப்போம். 🐂","On this day of thanking the cattle who work for us, let us also walk the good path shown by Thiruvalluvar. 🐂"]},
+"01-26":{t:["குடியரசு தின வாழ்த்துகள்!","HAPPY REPUBLIC DAY!"],x:["நம் நாட்டின் ஒற்றுமையையும் சுதந்திரத்தையும் பெருமையோடு போற்றுவோம். 🇮🇳","Let us proudly cherish the unity and freedom of our nation. 🇮🇳"]},
+"04-14":{t:["தமிழ்ப் புத்தாண்டு வாழ்த்துகள்!","HAPPY TAMIL NEW YEAR!"],x:["பிறக்கும் புத்தாண்டு உங்கள் வாழ்வில் புதிய நம்பிக்கையையும் நலத்தையும் வளத்தையும் தரட்டும். 🌼","May the new Tamil year bring you fresh hope, good health and prosperity. 🌼"]},
+"05-01":{t:["உழைப்பாளர் தின வாழ்த்துகள்!","HAPPY MAY DAY!"],x:["வியர்வை சிந்தி உழைக்கும் ஒவ்வொருவருக்கும் எங்கள் மனமார்ந்த வணக்கம். 💪","Heartfelt respect to everyone who works hard and sheds sweat for a living. 💪"]},
+"08-15":{t:["சுதந்திர தின வாழ்த்துகள்!","HAPPY INDEPENDENCE DAY!"],x:["நமக்காகப் போராடிய தியாகிகளை நினைவுகூர்ந்து, சுதந்திரத்தைப் பொறுப்போடு காப்போம். 🇮🇳","Let us remember the heroes who fought for us and protect our freedom responsibly. 🇮🇳"]},
+"12-25":{t:["கிறிஸ்துமஸ் நல்வாழ்த்துகள்!","MERRY CHRISTMAS!"],x:["அன்பும் அமைதியும் உங்கள் இல்லங்களில் நிறையும் இனிய கிறிஸ்துமஸ் வாழ்த்துகள். 🎄","Wishing you a joyful Christmas filled with love and peace in your home. 🎄"]},
+"2026-11-24":{t:["கார்த்திகை தீபத் திருநாள் வாழ்த்துகள்!","HAPPY KARTHIGAI DEEPAM!"],x:["ஏற்றும் ஒவ்வொரு தீபமும் உங்கள் வாழ்வில் ஒளியையும் நன்மையையும் நிறைக்கட்டும். 🪔","May every lamp you light fill your life with brightness and goodness. 🪔"]},
+"2027-01-22":{t:["தைப்பூச வாழ்த்துகள்!","HAPPY THAI POOSAM!"],x:["முருகப் பெருமானின் அருள் உங்கள் குடும்பத்தை எப்போதும் காக்கட்டும். வெற்றிவேல் முருகனுக்கு அரோகரா! 🙏","May Lord Murugan's grace always protect your family. Vetrivel Muruganukku Arohara! 🙏"]},
+"2027-08-25":{t:["கிருஷ்ண ஜெயந்தி வாழ்த்துகள்!","HAPPY KRISHNA JAYANTHI!"],x:["கண்ணனின் குறும்பும் அன்பும் உங்கள் இல்லத்தில் மகிழ்ச்சியை நிறைக்கட்டும். 🦚","May Krishna's playfulness and love fill your home with joy. 🦚"]},
+"2027-09-04":{t:["விநாயகர் சதுர்த்தி வாழ்த்துகள்!","HAPPY VINAYAGAR CHATHURTHI!"],x:["விநாயகப் பெருமான் உங்கள் தடைகளை நீக்கி, எல்லாக் காரியங்களிலும் வெற்றி தரட்டும். 🐘","May Lord Vinayagar remove your obstacles and grant success in all your work. 🐘"]},
+"2027-10-08":{t:["ஆயுத பூஜை வாழ்த்துகள்!","HAPPY AYUDHA POOJA!"],x:["நம் தொழிலுக்குத் துணை நிற்கும் கருவிகளை வணங்கி, உழைப்பில் உயர்வோம். 🙏","Let us honour the tools that support our work and rise through our efforts. 🙏"]},
+"2027-10-09":{t:["விஜயதசமி வாழ்த்துகள்!","HAPPY VIJAYADASAMI!"],x:["இன்று தொடங்கும் ஒவ்வொரு நற்செயலும் வெற்றியில் முடியட்டும். 🌺","May every good work begun today end in success. 🌺"]},
+"2027-10-28":{t:["தீபாவளி நல்வாழ்த்துகள்!","HAPPY DEEPAVALI!"],x:["ஒளியும் இனிப்பும் சிரிப்பும் உங்கள் இல்லத்தை நிறைக்கும் இனிய தீபாவளி வாழ்த்துகள். 🪔","Wishing you a bright Deepavali filled with light, sweets and laughter at home. 🪔"]}
+};
+function festInfo(){
+ if(variation!==0)return null;
+ const n=new Date(),y=n.getFullYear(),m=String(n.getMonth()+1).padStart(2,"0"),d=String(n.getDate()).padStart(2,"0");
+ return FEST[y+"-"+m+"-"+d]||FEST[m+"-"+d]||null;
+}
+function titles(){
+ const F=festInfo();
+ if(F)return{ta:F.t[0],en:F.t[1],item:F.x,fest:true};
+ const M=mode==="morning";
+ return{ta:M?"காலை வணக்கம்!":"இரவு வணக்கம்!",en:M?"GOOD MORNING!":"GOOD NIGHT!",item:pickItem(),fest:false};
+}
+/* ---- settings (name, city, footer on/off) ---- */
+const SET_KEY="vanakkam_settings_v1";
+function loadSet(){const d={name:"Ramesh",city:"Coimbatore",foot:true};try{const o=JSON.parse(localStorage.getItem(SET_KEY)||"{}");if(typeof o.name==="string")d.name=o.name;if(typeof o.city==="string")d.city=o.city;if(typeof o.foot==="boolean")d.foot=o.foot}catch(e){console.warn(e)}return d}
+function footerText(){const s=loadSet();return s.foot?[s.name.trim(),s.city.trim()].filter(Boolean).join(", "):""}
 let mode="morning", variation=0;
 const $=id=>document.getElementById(id);
 function dayCount(){
@@ -203,21 +262,23 @@ function updateClock(){
  $("dayNumber").textContent="#"+dayLabel();
 }
 function render(){
- const item=pickItem();
- $("greeting").textContent=mode==="morning"?"🌅 காலை வணக்கம்!":"🌙 இரவு வணக்கம்!";
- $("tamilText").textContent=item[0]; $("englishText").textContent=item[1];
+ const T=titles();
+ $("greeting").textContent=(T.fest?"🎉 ":(mode==="morning"?"🌅 ":"🌙 "))+T.ta;
+ $("tamilText").textContent=T.item[0]; $("englishText").textContent=T.item[1];
+ const fn=$("festNote");if(T.fest){fn.style.display="block";fn.textContent="🎉 இன்று சிறப்பு நாள்: "+T.ta.replace("!","")}else{fn.style.display="none"}
  $("morningTab").classList.toggle("active",mode==="morning");
  $("nightTab").classList.toggle("active",mode==="night");
  updateClock(); renderSent();
 }
 function makeMessage(){
- const item=pickItem(), now=new Date();
+ const T=titles(), now=new Date();
  const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(x=>[x.type,x.value]));
  const dateEn=`${P.weekday}, ${P.day} ${P.month} ${P.year}`;
  const LN="━━━━━━━━━━━━━━", M=mode==="morning";
- return `${M?"🌅":"🌙"} *#${dayLabel()}* | ${dateEn} | ${time}\n${LN}\n\n*${M?"காலை வணக்கம்":"இரவு வணக்கம்"}!*\n${item[0]}\n\n*${M?"GOOD MORNING":"GOOD NIGHT"}!*\n${item[1]}\n\n${LN}\n🙏 *Ramesh, Coimbatore*`;
+ const ft=footerText();
+ return `${T.fest?"🎉":(M?"🌅":"🌙")} *#${dayLabel()}* | ${dateEn} | ${time}\n${LN}\n\n*${T.ta}*\n${T.item[0]}\n\n*${T.en}*\n${T.item[1]}${ft?`\n\n${LN}\n🙏 *${ft}*`:""}`;
 }
 $("morningTab").onclick=()=>{manualMode=true;mode="morning";variation=0;render()};
 $("nightTab").onclick=()=>{manualMode=true;mode="night";variation=0;render()};
@@ -303,7 +364,7 @@ function flower(x,cx,cy,r,n,c1,c2,c3){x.save();x.translate(cx,cy);for(let i=0;i<
 function star(x,cx,cy,r,col,a){x.save();x.globalAlpha=a;x.fillStyle=col;x.beginPath();for(let i=0;i<8;i++){const rad=i%2?r*.28:r,ang=i*Math.PI/4-Math.PI/2;x.lineTo(cx+Math.cos(ang)*rad,cy+Math.sin(ang)*rad)}x.closePath();x.fill();x.restore()}
 function drawCard(){
  const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;
- const x=c.getContext("2d"),M=mode==="morning",item=pickItem(),now=new Date(),R=rng(dayCount()*131+(M?1:2)),TH=(M?TM:TN)[now.getDay()];
+ const x=c.getContext("2d"),M=mode==="morning",T=titles(),item=T.item,now=new Date(),R=rng(dayCount()*131+(M?1:2)),TH=(M?TM:TN)[now.getDay()];
  x.textAlign="center";x.textBaseline="alphabetic";
  // sky
  const sky=x.createLinearGradient(0,0,0,H);
@@ -346,10 +407,10 @@ function drawCard(){
  flower(x,px+14,py+ph-14,40,8,fb[0],fb[1],fb[2]);flower(x,px+pw-14,py+ph-14,40,8,fa[0],fa[1],fa[2]);
  // text
  const ink=TH.ink,tTa=TH.tTa,tEn=M?dk(TH.tEn,.25):TH.tEn,bEn=M?dk(TH.ink,.35):(TH.bEn||TH.ink);
- const maxW=pw-130,avail=ph-130,titTa=M?"காலை வணக்கம்!":"இரவு வணக்கம்!",titEn=M?"GOOD MORNING!":"GOOD NIGHT!";
+ const maxW=pw-130,avail=ph-130,titTa=T.ta,titEn=T.en;
  let L=null;
  for(let sc=1;sc>=.5;sc-=.04){
-  const sT=62*sc,sB=50*sc,sE=50*sc,sM=44*sc;
+  const sB=50*sc,sM=44*sc;x.font="800 "+(62*sc)+"px "+FONT;const sT=Math.min(62*sc,62*sc*maxW/x.measureText(titTa).width);x.font="800 "+(50*sc)+"px "+LAT;const sE=Math.min(50*sc,50*sc*maxW/x.measureText(titEn).width);
   x.font="700 "+sB+"px "+FONT;const la=wrapLines(x,item[0],maxW);
   x.font="700 "+sM+"px "+LAT;const le=wrapLines(x,item[1],maxW);
   const h=sT*1.35+la.length*sB*1.6+60+sE*1.4+le.length*sM*1.55;
@@ -362,9 +423,13 @@ function drawCard(){
  x.font="800 "+L.sE+"px "+LAT;x.fillStyle=tEn;y+=L.sE*1.1;boldFill(x,titEn,540,y,1.8);
  x.font="700 "+L.sM+"px "+LAT;x.fillStyle=bEn;for(const t of L.le){y+=L.sM*1.55;boldFill(x,t,540,y,1.3)}
  // footer pill
- const fg=x.createLinearGradient(260,0,820,0);fg.addColorStop(0,TH.pill[0]);fg.addColorStop(1,TH.pill[1]);
- x.save();x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=18;x.shadowOffsetY=6;rr(x,250,1200,580,80,40);x.fillStyle=fg;x.fill();x.restore();
- x.font="700 44px "+LAT;x.fillStyle="#ffffff";boldFill(x,"🙏 Ramesh, Coimbatore",540,1256,1.4);
+ const ft=footerText();
+ if(ft){
+  x.font="700 44px "+LAT;const tw=x.measureText("🙏 "+ft).width,pwid=Math.min(940,Math.max(380,tw+110));
+  const fg=x.createLinearGradient(540-pwid/2,0,540+pwid/2,0);fg.addColorStop(0,TH.pill[0]);fg.addColorStop(1,TH.pill[1]);
+  x.save();x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=18;x.shadowOffsetY=6;rr(x,540-pwid/2,1200,pwid,80,40);x.fillStyle=fg;x.fill();x.restore();
+  x.font="700 44px "+LAT;x.fillStyle="#ffffff";boldFill(x,"🙏 "+ft,540,1256,1.4);
+ }
  return c;
 }
 async function cardBlob(){const c=drawCard();return await new Promise(r=>c.toBlob(r,"image/png"))}
@@ -384,6 +449,17 @@ $("saveBtn").onclick=async()=>{
  try{downloadBlob(await cardBlob(),cardName());markSent();flash(b,"✅ Save ஆனது",old)}
  catch(e){console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
 };
+function showSheet(w){$("ov").style.display="flex";$("editSheet").style.display=w==="edit"?"block":"none";$("setSheet").style.display=w==="set"?"block":"none"}
+function closeSheet(){$("ov").style.display="none"}
+$("ov").onclick=e=>{if(e.target===$("ov"))closeSheet()};
+$("editBtn").onclick=()=>{$("editArea").value=makeMessage();showSheet("edit")};
+$("edReset").onclick=()=>{$("editArea").value=makeMessage()};
+$("edClose").onclick=closeSheet;
+$("edCopy").onclick=async()=>{const b=$("edCopy"),ok=await copyText($("editArea").value);if(ok)markSent();flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
+$("edShare").onclick=()=>{markSent();location.href="https://wa.me/?text="+encodeURIComponent($("editArea").value)};
+$("settingsBtn").onclick=()=>{const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;showSheet("set")};
+$("setClose").onclick=closeSheet;
+$("setSave").onclick=()=>{const o={name:$("setName").value.trim().slice(0,40),city:$("setCity").value.trim().slice(0,40),foot:$("setFoot").checked};try{localStorage.setItem(SET_KEY,JSON.stringify(o))}catch(e){console.warn(e)}closeSheet();render()};
 mode=autoMode();
 render();setInterval(updateClock,30000);
 fetch("messages.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(j=>{if(Array.isArray(j)&&j.length){AI=j;render()}}).catch(e=>console.warn(e));
