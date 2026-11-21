@@ -28,9 +28,14 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
 .sheet h3{margin:0 0 10px;color:var(--navy);font-size:18px}
 .sheet textarea{width:100%;min-height:46vh;font:inherit;font-size:16px;line-height:1.6;border:1px solid #d0d5dd;border-radius:12px;padding:10px}
 .sheet label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.sheet select,.sheet input[type=date]{width:100%;font:inherit;font-size:16px;border:1px solid #d0d5dd;border-radius:12px;padding:11px;background:#fff}
 .sheet input[type=text]{width:100%;font:inherit;font-size:16px;border:1px solid #d0d5dd;border-radius:12px;padding:11px}
 .sheet .chk{display:flex;align-items:center;gap:9px;font-size:15px;color:var(--ink)}
 .sheet .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.sheet .row button{background:#eef1f8;color:var(--navy)}
+.hint{font-size:13px;color:#b42318;min-height:18px;margin-top:6px}.hint2{font-size:14px;color:var(--muted);padding:6px 0}
+.evrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f8;font-size:15px}
+.evdel{border:0;background:#fde8e8;color:#b42318;border-radius:10px;padding:6px 11px;font-size:15px}
+.evbtn{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;padding:13px;font-size:16px;font-weight:700;background:#ffe4ef;color:#9d174d}
 </style>
 </head>
 <body>
@@ -52,6 +57,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     </div>
     <div class="sent" id="sentNote" style="display:none"></div>
     <div class="fest" id="festNote" style="display:none"></div>
+    <div id="evNote" style="display:none"></div>
     <article class="card" aria-live="polite">
       <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
       <div class="lang">தமிழ்</div>
@@ -64,8 +70,10 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
       <button id="copyBtn" type="button">📋 Copy</button>
       <button id="imgBtn" type="button">🖼️ படமாகப் பகிர</button>
       <button id="saveBtn" type="button">💾 படம் Save</button>
+      <button class="wide" id="saveWaBtn" type="button">📲 Save செய்து WhatsApp திற</button>
       <button id="editBtn" type="button">✏️ திருத்து</button>
       <button id="settingsBtn" type="button">⚙️ Settings</button>
+      <button class="wide" id="evBtn" type="button">🎂 பிறந்தநாள் / திருமண நாள்</button>
       <button class="primary wide" id="shareBtn" type="button">📲 WhatsApp-ல் பகிரவும்</button>
       <button class="wide" id="installBtn" type="button" style="display:none">⬇️ மொபைலில் Install செய்யவும்</button>
     </div>
@@ -79,10 +87,26 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <textarea id="editArea"></textarea>
     <div class="row"><button id="edCopy" type="button">📋 Copy</button><button id="edShare" type="button">📲 WhatsApp</button><button id="edReset" type="button">↩️ மீட்டமை</button><button id="edClose" type="button">✖ மூடு</button></div>
   </div>
+  <div class="sheet" id="wishSheet" style="display:none">
+    <h3 id="wishTitle">🎉 வாழ்த்து</h3>
+    <textarea id="wishArea"></textarea>
+    <div class="row"><button id="wiCopy" type="button">📋 Copy</button><button id="wiShare" type="button">📲 WhatsApp</button><button id="wiImg" type="button">🖼️ படம் பகிர</button><button id="wiSave" type="button">💾 படம் Save</button></div>
+    <div class="row" style="grid-template-columns:1fr"><button id="wiClose" type="button">✖ மூடு</button></div>
+  </div>
+  <div class="sheet" id="evSheet" style="display:none">
+    <h3>🎂 பிறந்தநாள் / திருமண நாள்</h3>
+    <div id="evList"></div>
+    <label for="evName">பெயர்</label><input type="text" id="evName" maxlength="40">
+    <label for="evType">வகை</label><select id="evType"><option value="b">🎂 பிறந்தநாள்</option><option value="a">💑 திருமண நாள்</option></select>
+    <label for="evDate">தேதி (வருடம் எதுவாக இருந்தாலும் சரி)</label><input type="date" id="evDate">
+    <div class="hint" id="evMsg"></div>
+    <div class="row"><button id="evAdd" type="button">➕ சேர்</button><button id="evClose" type="button">✖ மூடு</button></div>
+  </div>
   <div class="sheet" id="setSheet" style="display:none">
     <h3>⚙️ Settings</h3>
     <label for="setName">பெயர்</label><input type="text" id="setName" maxlength="40">
     <label for="setCity">ஊர்</label><input type="text" id="setCity" maxlength="40">
+    <label for="setSize">படத்தின் அளவு</label><select id="setSize"><option value="45">Chat (4:5)</option><option value="916">WhatsApp Status (9:16)</option></select>
     <label class="chk"><input type="checkbox" id="setFoot"> செய்தியின் கடைசியில் பெயர் காட்டு</label>
     <div class="row"><button id="setSave" type="button">💾 Save</button><button id="setClose" type="button">✖ மூடு</button></div>
   </div>
@@ -226,6 +250,11 @@ const FEST={
 "08-15":{t:["சுதந்திர தின வாழ்த்துகள்!","HAPPY INDEPENDENCE DAY!"],x:["நமக்காகப் போராடிய தியாகிகளை நினைவுகூர்ந்து, சுதந்திரத்தைப் பொறுப்போடு காப்போம். 🇮🇳","Let us remember the heroes who fought for us and protect our freedom responsibly. 🇮🇳"]},
 "12-25":{t:["கிறிஸ்துமஸ் நல்வாழ்த்துகள்!","MERRY CHRISTMAS!"],x:["அன்பும் அமைதியும் உங்கள் இல்லங்களில் நிறையும் இனிய கிறிஸ்துமஸ் வாழ்த்துகள். 🎄","Wishing you a joyful Christmas filled with love and peace in your home. 🎄"]},
 "2026-11-24":{t:["கார்த்திகை தீபத் திருநாள் வாழ்த்துகள்!","HAPPY KARTHIGAI DEEPAM!"],x:["ஏற்றும் ஒவ்வொரு தீபமும் உங்கள் வாழ்வில் ஒளியையும் நன்மையையும் நிறைக்கட்டும். 🪔","May every lamp you light fill your life with brightness and goodness. 🪔"]},
+"2027-03-06":{t:["மகா சிவராத்திரி வாழ்த்துகள்!","HAPPY MAHA SHIVARATRI!"],x:["சிவனின் அருளால் உங்கள் மனதில் இருள் நீங்கி, அமைதியும் ஆரோக்கியமும் நிறையட்டும். ஓம் நமசிவாய! 🔱","By Lord Shiva's grace, may the darkness leave your mind and peace and health fill your life. Om Namah Shivaya! 🔱"]},
+"2027-03-10":{t:["ரம்ஜான் நல்வாழ்த்துகள்!","EID MUBARAK!"],x:["இந்த இனிய நாளில் அன்பும் அமைதியும் ஒற்றுமையும் உங்கள் இல்லத்தில் நிறையட்டும். ரம்ஜான் நல்வாழ்த்துகள்! 🌙","On this blessed day, may love, peace and unity fill your home. Eid Mubarak! 🌙"]},
+"2027-03-26":{t:["புனித வெள்ளி","GOOD FRIDAY"],x:["அன்பு, கருணை, தியாகத்தை நினைவுகூரும் இந்தப் புனித நாளில் உங்களுக்கு அமைதி கிடைக்கட்டும். 🕊️","May you find peace on this holy day that reminds us of love, compassion and sacrifice. 🕊️"]},
+"2027-03-28":{t:["ஈஸ்டர் நல்வாழ்த்துகள்!","HAPPY EASTER!"],x:["புதிய நம்பிக்கையும் புதிய வாழ்வும் உங்கள் இல்லத்தில் மலரட்டும். ஈஸ்டர் வாழ்த்துகள்! 🌷","May new hope and new life bloom in your home. Happy Easter! 🌷"]},
+"2027-05-17":{t:["பக்ரீத் நல்வாழ்த்துகள்!","EID AL-ADHA MUBARAK!"],x:["தியாகத்தையும் அன்பையும் போற்றும் இந்த நாள் உங்கள் குடும்பத்துக்கு மகிழ்ச்சி தரட்டும். 🌙","May this day, which honours sacrifice and love, bring joy to your family. 🌙"]},
 "2027-01-22":{t:["தைப்பூச வாழ்த்துகள்!","HAPPY THAI POOSAM!"],x:["முருகப் பெருமானின் அருள் உங்கள் குடும்பத்தை எப்போதும் காக்கட்டும். வெற்றிவேல் முருகனுக்கு அரோகரா! 🙏","May Lord Murugan's grace always protect your family. Vetrivel Muruganukku Arohara! 🙏"]},
 "2027-08-25":{t:["கிருஷ்ண ஜெயந்தி வாழ்த்துகள்!","HAPPY KRISHNA JAYANTHI!"],x:["கண்ணனின் குறும்பும் அன்பும் உங்கள் இல்லத்தில் மகிழ்ச்சியை நிறைக்கட்டும். 🦚","May Krishna's playfulness and love fill your home with joy. 🦚"]},
 "2027-09-04":{t:["விநாயகர் சதுர்த்தி வாழ்த்துகள்!","HAPPY VINAYAGAR CHATHURTHI!"],x:["விநாயகப் பெருமான் உங்கள் தடைகளை நீக்கி, எல்லாக் காரியங்களிலும் வெற்றி தரட்டும். 🐘","May Lord Vinayagar remove your obstacles and grant success in all your work. 🐘"]},
@@ -246,8 +275,60 @@ function titles(){
 }
 /* ---- settings (name, city, footer on/off) ---- */
 const SET_KEY="vanakkam_settings_v1";
-function loadSet(){const d={name:"Ramesh",city:"Coimbatore",foot:true};try{const o=JSON.parse(localStorage.getItem(SET_KEY)||"{}");if(typeof o.name==="string")d.name=o.name;if(typeof o.city==="string")d.city=o.city;if(typeof o.foot==="boolean")d.foot=o.foot}catch(e){console.warn(e)}return d}
+function loadSet(){const d={name:"Ramesh",city:"Coimbatore",foot:true,sz:"45"};try{const o=JSON.parse(localStorage.getItem(SET_KEY)||"{}");if(typeof o.name==="string")d.name=o.name;if(typeof o.city==="string")d.city=o.city;if(typeof o.foot==="boolean")d.foot=o.foot;if(o.sz==="916"||o.sz==="45")d.sz=o.sz}catch(e){console.warn(e)}return d}
 function footerText(){const s=loadSet();return s.foot?[s.name.trim(),s.city.trim()].filter(Boolean).join(", "):""}
+
+/* ---- birthdays / anniversaries (stored only on this phone) ---- */
+const EV_KEY="vanakkam_events_v1";
+function loadEv(){try{const a=JSON.parse(localStorage.getItem(EV_KEY)||"[]");return Array.isArray(a)?a.filter(e=>e&&typeof e.n==="string"&&/^\d\d-\d\d$/.test(e.md)&&(e.t==="b"||e.t==="a")):[]}catch(e){console.warn(e);return[]}}
+function saveEv(a){try{localStorage.setItem(EV_KEY,JSON.stringify(a))}catch(e){console.warn(e)}}
+function todayMD(){const n=new Date();return String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")}
+function leap(y){return y%4===0&&(y%100!==0||y%400===0)}
+function evDate(y,md){const p=md.split("-").map(Number);return new Date(y,p[0]-1,(p[0]===2&&p[1]===29&&!leap(y))?28:p[1])}
+function isToday(e){return e.md===todayMD()||(e.md==="02-29"&&todayMD()==="02-28"&&!leap(new Date().getFullYear()))}
+function daysUntil(md){const n=new Date(),t0=new Date(n.getFullYear(),n.getMonth(),n.getDate());let t=evDate(n.getFullYear(),md);if(t<t0)t=evDate(n.getFullYear()+1,md);return Math.round((t-t0)/864e5)}
+const MD_FMT=new Intl.DateTimeFormat("ta-IN",{day:"numeric",month:"long"});
+function mdLabel(md){const p=md.split("-").map(Number);try{return MD_FMT.format(new Date(2000,p[0]-1,p[1]))}catch(e){return md}}
+const BW=[
+["இனிய பிறந்தநாள் நல்வாழ்த்துகள், {n}! இந்த நாள் போலவே உங்கள் வாழ்க்கை முழுவதும் மகிழ்ச்சியும் ஆரோக்கியமும் நிறைந்திருக்கட்டும். 🎂","Happy Birthday, {n}! May your whole life be filled with happiness and good health, just like today. 🎂"],
+["{n}, உங்கள் கனவுகள் அனைத்தும் இந்த வருடம் நனவாகட்டும். இனிய பிறந்தநாள் வாழ்த்துகள்! 🎉","{n}, may all your dreams come true this year. Happy Birthday! 🎉"],
+["அன்பும் நலமும் வெற்றியும் உங்களைத் தேடி வரட்டும், {n}. இனிய பிறந்தநாள்! 🎁","May love, health and success come looking for you, {n}. Happy Birthday! 🎁"],
+["இறைவன் அருளால் நீங்கள் நீடூழி வாழ்ந்து எல்லா நலனும் பெற வாழ்த்துகிறோம், {n}. பிறந்தநாள் நல்வாழ்த்துகள்! 🙏","By God's grace, we wish you a long life and every good thing, {n}. Happy Birthday! 🙏"],
+["இன்று உங்கள் நாள், {n}! சிரிப்பும் இனிப்பும் அன்பும் நிறைந்த ஒரு அழகான பிறந்தநாளாக அமையட்டும். 🎈","Today is your day, {n}! May it be a beautiful birthday filled with smiles, sweets and love. 🎈"]
+];
+const AW=[
+["இனிய திருமண நாள் வாழ்த்துகள், {n}! உங்கள் அன்பும் ஒற்றுமையும் எப்போதும் தொடரட்டும். 💞","Happy Wedding Anniversary, {n}! May your love and togetherness always continue. 💞"],
+["{n}, உங்கள் இல்லறம் மகிழ்ச்சியும் நிம்மதியும் நிறைந்து செழிக்க மனமார வாழ்த்துகிறோம். 💐","{n}, we heartily wish your married life flourishes with happiness and peace. 💐"],
+["ஒருவருக்கொருவர் துணையாக இன்னும் பல ஆண்டுகள் இனிதே வாழ வாழ்த்துகள், {n}! திருமண நாள் நல்வாழ்த்துகள். 🌹","Wishing you many more years of being each other's support, {n}! Happy Anniversary. 🌹"],
+["இறைவன் அருளால் உங்கள் குடும்பம் எல்லா நலமும் பெற்று வாழ்க, {n}. இனிய திருமண நாள்! 🙏","By God's grace, may your family be blessed with every good thing, {n}. Happy Anniversary! 🙏"]
+];
+function hashStr(t){let h=0;for(const ch of t)h=(h*31+ch.charCodeAt(0))>>>0;return h}
+function wishFor(ev){
+ const b=ev.t==="b",list=b?BW:AW,w=list[hashStr(ev.n+new Date().getFullYear())%list.length],nm=ev.n.trim();
+ return{ta:(b?"பிறந்தநாள் வாழ்த்துகள், ":"திருமண நாள் வாழ்த்துகள், ")+nm+"!",en:(b?"HAPPY BIRTHDAY, ":"HAPPY ANNIVERSARY, ")+nm.toUpperCase()+"!",item:[w[0].split("{n}").join(nm),w[1].split("{n}").join(nm)],fest:true,bright:true};
+}
+function wishText(w){const ft=footerText();return"🎉 *"+w.ta+"*\n━━━━━━━━━━━━━━\n\n"+w.item[0]+"\n\n*"+w.en+"*\n"+w.item[1]+(ft?"\n\n━━━━━━━━━━━━━━\n🙏 *"+ft+"*":"")}
+let curWish=null;
+function openWish(ev){curWish=wishFor(ev);$("wishTitle").textContent=(ev.t==="b"?"🎂 ":"💑 ")+ev.n;$("wishArea").value=wishText(curWish);showSheet("wish")}
+function renderEv(){
+ const box=$("evNote"),list=loadEv().filter(isToday);
+ box.textContent="";
+ if(!list.length){box.style.display="none";return}
+ box.style.display="block";
+ list.forEach(e=>{const b=document.createElement("button");b.type="button";b.className="evbtn";b.textContent=(e.t==="b"?"🎂 ":"💑 ")+e.n+" - இன்று வாழ்த்து அனுப்புங்கள்";b.onclick=()=>openWish(e);box.appendChild(b)});
+}
+function renderEvList(){
+ const box=$("evList"),a=loadEv().map((e,i)=>({e,i,du:daysUntil(e.md)})).sort((p,q)=>p.du-q.du);
+ box.textContent="";
+ if(!a.length){const p=document.createElement("div");p.className="hint2";p.textContent="இன்னும் யாரும் சேர்க்கவில்லை.";box.appendChild(p);return}
+ a.forEach(o=>{
+  const r=document.createElement("div");r.className="evrow";
+  const t=document.createElement("span");t.textContent=(o.e.t==="b"?"🎂 ":"💑 ")+o.e.n+" · "+mdLabel(o.e.md)+(o.du===0?" · இன்று!":" · "+o.du+" நாள்");
+  const d=document.createElement("button");d.type="button";d.className="evdel";d.textContent="✖";
+  d.onclick=()=>{const l=loadEv();l.splice(o.i,1);saveEv(l);renderEvList();renderEv()};
+  r.appendChild(t);r.appendChild(d);box.appendChild(r);
+ });
+}
 let mode="morning", variation=0;
 const $=id=>document.getElementById(id);
 function dayCount(){
@@ -268,7 +349,7 @@ function render(){
  const fn=$("festNote");if(T.fest){fn.style.display="block";fn.textContent="🎉 இன்று சிறப்பு நாள்: "+T.ta.replace("!","")}else{fn.style.display="none"}
  $("morningTab").classList.toggle("active",mode==="morning");
  $("nightTab").classList.toggle("active",mode==="night");
- updateClock(); renderSent();
+ updateClock(); renderSent(); renderEv();
 }
 function makeMessage(){
  const T=titles(), now=new Date();
@@ -362,23 +443,24 @@ function dk(c,f){const n=parseInt(c.slice(1),16),r=(n>>16)*(1-f),g=((n>>8)&255)*
 function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function flower(x,cx,cy,r,n,c1,c2,c3){x.save();x.translate(cx,cy);for(let i=0;i<n;i++){x.save();x.rotate(i*2*Math.PI/n);x.beginPath();x.ellipse(0,-r*.62,r*.34,r*.62,0,0,Math.PI*2);x.fillStyle=i%2?c1:c2;x.fill();x.restore()}x.beginPath();x.arc(0,0,r*.28,0,Math.PI*2);x.fillStyle=c3;x.fill();x.restore()}
 function star(x,cx,cy,r,col,a){x.save();x.globalAlpha=a;x.fillStyle=col;x.beginPath();for(let i=0;i<8;i++){const rad=i%2?r*.28:r,ang=i*Math.PI/4-Math.PI/2;x.lineTo(cx+Math.cos(ang)*rad,cy+Math.sin(ang)*rad)}x.closePath();x.fill();x.restore()}
-function drawCard(){
- const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;
- const x=c.getContext("2d"),M=mode==="morning",T=titles(),item=T.item,now=new Date(),R=rng(dayCount()*131+(M?1:2)),TH=(M?TM:TN)[now.getDay()];
+function drawCard(over){
+ const W=1080,H=loadSet().sz==="916"?1920:1350,dy=(H-1350)/2,c=document.createElement("canvas");c.width=W;c.height=H;
+ const x=c.getContext("2d"),M=(over&&over.bright)?true:mode==="morning",T=over||titles(),item=T.item,now=new Date(),R=rng(dayCount()*131+(M?1:2)+(over?7:0)),TH=(M?TM:TN)[now.getDay()];
  x.textAlign="center";x.textBaseline="alphabetic";
  // sky
  const sky=x.createLinearGradient(0,0,0,H);
  TH.sky.forEach((c,i)=>sky.addColorStop(i/(TH.sky.length-1),c));
  x.fillStyle=sky;x.fillRect(0,0,W,H);
+ x.save();x.translate(0,dy);
  if(M){
-  const gl=x.createRadialGradient(540,135,20,540,135,240);gl.addColorStop(0,"rgba(255,244,160,.95)");gl.addColorStop(.5,"rgba(255,210,90,.35)");gl.addColorStop(1,"rgba(255,210,90,0)");x.fillStyle=gl;x.fillRect(240,0,600,380);
+  const gl=x.createRadialGradient(540,135,20,540,135,240);gl.addColorStop(0,"rgba(255,244,160,.95)");gl.addColorStop(.5,"rgba(255,210,90,.35)");gl.addColorStop(1,"rgba(255,210,90,0)");x.fillStyle=gl;x.fillRect(240,-300,600,680);
   x.strokeStyle="#ffd54f";x.lineCap="round";
   for(let i=0;i<24;i++){const a=i*Math.PI/12,r1=82,r2=i%2?112:128;x.lineWidth=i%2?5:8;x.beginPath();x.moveTo(540+Math.cos(a)*r1,135+Math.sin(a)*r1);x.lineTo(540+Math.cos(a)*r2,135+Math.sin(a)*r2);x.stroke()}
   const sd=x.createRadialGradient(525,120,5,540,135,62);sd.addColorStop(0,"#fffde7");sd.addColorStop(.45,"#ffca28");sd.addColorStop(1,"#ff8f00");x.beginPath();x.arc(540,135,62,0,Math.PI*2);x.fillStyle=sd;x.fill();
   x.strokeStyle="#8d3b1f";x.lineWidth=5;for(const [bx,by,s] of [[170,130,1],[235,175,.8],[900,115,1.1],[835,165,.7]]){x.beginPath();x.moveTo(bx-26*s,by);x.quadraticCurveTo(bx-12*s,by-18*s,bx,by);x.quadraticCurveTo(bx+12*s,by-18*s,bx+26*s,by);x.stroke()}
  }else{
-  for(let i=0;i<70;i++){const sx=R()*W,sy=R()*1000;star(x,sx,sy,3+R()*7,R()>.6?"#ffe082":"#ffffff",.35+R()*.6)}
-  const gl=x.createRadialGradient(540,135,10,540,135,230);gl.addColorStop(0,"rgba(255,244,196,.6)");gl.addColorStop(1,"rgba(255,244,196,0)");x.fillStyle=gl;x.fillRect(240,0,600,380);
+  for(let i=0;i<70;i++){const sx=R()*W,sy=R()*(1000+2*dy)-dy;star(x,sx,sy,3+R()*7,R()>.6?"#ffe082":"#ffffff",.35+R()*.6)}
+  const gl=x.createRadialGradient(540,135,10,540,135,230);gl.addColorStop(0,"rgba(255,244,196,.6)");gl.addColorStop(1,"rgba(255,244,196,0)");x.fillStyle=gl;x.fillRect(240,-300,600,680);
   const off=document.createElement("canvas");off.width=240;off.height=240;const o=off.getContext("2d");
   o.fillStyle="#fff3c4";o.beginPath();o.arc(120,120,64,0,Math.PI*2);o.fill();o.globalCompositeOperation="destination-out";o.beginPath();o.arc(150,102,56,0,Math.PI*2);o.fill();
   x.drawImage(off,420,15);
@@ -388,11 +470,11 @@ function drawCard(){
  hb.addColorStop(0,TH.hb[0]);hb.addColorStop(1,TH.hb[1]);hf.addColorStop(0,TH.hf[0]);hf.addColorStop(1,TH.hf[1]);
  x.fillStyle=hb;x.beginPath();x.moveTo(0,1120);x.bezierCurveTo(250,1040,500,1100,720,1060);x.bezierCurveTo(880,1030,1000,1080,1080,1050);x.lineTo(W,H);x.lineTo(0,H);x.fill();
  x.fillStyle=hf;x.beginPath();x.moveTo(0,1230);x.bezierCurveTo(200,1180,420,1250,640,1210);x.bezierCurveTo(820,1180,960,1230,1080,1200);x.lineTo(W,H);x.lineTo(0,H);x.fill();
- if(M){const cols=[TH.fa,TH.fb,["#ffca28","#ffe082"],[TH.fa[1],TH.fb[0]]];for(let i=0;i<14;i++){const k=cols[i%4];flower(x,30+R()*(W-60),1270+R()*70,14+R()*12,6,k[0],k[1],"#fff59d")}}
- else{for(let i=0;i<22;i++){const fx=R()*W,fy=1130+R()*200,gl=x.createRadialGradient(fx,fy,0,fx,fy,16);gl.addColorStop(0,"rgba(255,235,120,1)");gl.addColorStop(1,"rgba(255,235,120,0)");x.fillStyle=gl;x.beginPath();x.arc(fx,fy,16,0,Math.PI*2);x.fill()}}
+ if(M){const cols=[TH.fa,TH.fb,["#ffca28","#ffe082"],[TH.fa[1],TH.fb[0]]];for(let i=0;i<14;i++){const k=cols[i%4];flower(x,30+R()*(W-60),1270+R()*(70+dy),14+R()*12,6,k[0],k[1],"#fff59d")}}
+ else{for(let i=0;i<22;i++){const fx=R()*W,fy=1130+R()*(200+dy),gl=x.createRadialGradient(fx,fy,0,fx,fy,16);gl.addColorStop(0,"rgba(255,235,120,1)");gl.addColorStop(1,"rgba(255,235,120,0)");x.fillStyle=gl;x.beginPath();x.arc(fx,fy,16,0,Math.PI*2);x.fill()}}
  // date pill
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(y=>[y.type,y.value]));
- const dt="#"+dayLabel()+"  •  "+P.weekday+", "+P.day+" "+P.month+" "+P.year;
+ const dt=(over?"":"#"+dayLabel()+"  •  ")+P.weekday+", "+P.day+" "+P.month+" "+P.year;
  x.font="700 34px "+LAT;const dw=x.measureText(dt).width+70;
  rr(x,540-dw/2,262,dw,56,28);x.fillStyle=M?"rgba(255,255,255,.80)":"rgba(255,255,255,.14)";x.fill();x.lineWidth=2;x.strokeStyle=M?"rgba(230,81,0,.5)":"rgba(255,213,79,.6)";x.stroke();
  x.fillStyle=M?dk(TH.date,.15):TH.date;boldFill(x,dt,540,301,1.4);
@@ -430,26 +512,30 @@ function drawCard(){
   x.save();x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=18;x.shadowOffsetY=6;rr(x,540-pwid/2,1200,pwid,80,40);x.fillStyle=fg;x.fill();x.restore();
   x.font="700 44px "+LAT;x.fillStyle="#ffffff";boldFill(x,"🙏 "+ft,540,1256,1.4);
  }
+ x.restore();
  return c;
 }
-async function cardBlob(){const c=drawCard();return await new Promise(r=>c.toBlob(r,"image/png"))}
-function cardName(){return"vanakkam-"+dayLabel()+"-"+mode+".png"}
+async function cardBlob(over){const c=drawCard(over);return await new Promise(r=>c.toBlob(r,"image/png"))}
+function cardName(over){return"vanakkam-"+(over?"wish":dayLabel()+"-"+mode)+".png"}
 function downloadBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),8000)}
 function flash(b,t,old){b.textContent=t;setTimeout(()=>b.textContent=old,2500)}
-$("imgBtn").onclick=async()=>{
- const b=$("imgBtn"),old="🖼️ படமாகப் பகிர";
+async function shareImage(b,old,over){
  try{
-  const blob=await cardBlob(),file=new File([blob],cardName(),{type:"image/png"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});markSent();return}
-  downloadBlob(blob,cardName());markSent();flash(b,"✅ படம் Save ஆனது",old);
+  const blob=await cardBlob(over),file=new File([blob],cardName(over),{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});if(!over)markSent();return}
+  downloadBlob(blob,cardName(over));if(!over)markSent();flash(b,"✅ படம் Save ஆனது",old);
  }catch(e){if(e&&e.name==="AbortError")return;console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
-};
-$("saveBtn").onclick=async()=>{
- const b=$("saveBtn"),old="💾 படம் Save";
- try{downloadBlob(await cardBlob(),cardName());markSent();flash(b,"✅ Save ஆனது",old)}
- catch(e){console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
-};
-function showSheet(w){$("ov").style.display="flex";$("editSheet").style.display=w==="edit"?"block":"none";$("setSheet").style.display=w==="set"?"block":"none"}
+}
+async function saveImage(b,old,over,thenWa){
+ try{
+  downloadBlob(await cardBlob(over),cardName(over));if(!over)markSent();flash(b,"✅ Save ஆனது",old);
+  if(thenWa)setTimeout(()=>{try{location.href="whatsapp://"}catch(e){console.warn(e)}},900);
+ }catch(e){console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
+}
+$("imgBtn").onclick=()=>shareImage($("imgBtn"),"🖼️ படமாகப் பகிர");
+$("saveBtn").onclick=()=>saveImage($("saveBtn"),"💾 படம் Save");
+$("saveWaBtn").onclick=()=>saveImage($("saveWaBtn"),"📲 Save செய்து WhatsApp திற",undefined,true);
+function showSheet(w){$("ov").style.display="flex";for(const k of["edit","set","wish","ev"])$(k+"Sheet").style.display=k===w?"block":"none"}
 function closeSheet(){$("ov").style.display="none"}
 $("ov").onclick=e=>{if(e.target===$("ov"))closeSheet()};
 $("editBtn").onclick=()=>{$("editArea").value=makeMessage();showSheet("edit")};
@@ -457,9 +543,24 @@ $("edReset").onclick=()=>{$("editArea").value=makeMessage()};
 $("edClose").onclick=closeSheet;
 $("edCopy").onclick=async()=>{const b=$("edCopy"),ok=await copyText($("editArea").value);if(ok)markSent();flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
 $("edShare").onclick=()=>{markSent();location.href="https://wa.me/?text="+encodeURIComponent($("editArea").value)};
-$("settingsBtn").onclick=()=>{const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;showSheet("set")};
+$("settingsBtn").onclick=()=>{const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;$("setSize").value=s.sz;showSheet("set")};
 $("setClose").onclick=closeSheet;
-$("setSave").onclick=()=>{const o={name:$("setName").value.trim().slice(0,40),city:$("setCity").value.trim().slice(0,40),foot:$("setFoot").checked};try{localStorage.setItem(SET_KEY,JSON.stringify(o))}catch(e){console.warn(e)}closeSheet();render()};
+$("setSave").onclick=()=>{const o={name:$("setName").value.trim().slice(0,40),city:$("setCity").value.trim().slice(0,40),foot:$("setFoot").checked,sz:$("setSize").value==="916"?"916":"45"};try{localStorage.setItem(SET_KEY,JSON.stringify(o))}catch(e){console.warn(e)}closeSheet();render()};
+$("evBtn").onclick=()=>{$("evMsg").textContent="";renderEvList();showSheet("ev")};
+$("evClose").onclick=closeSheet;
+$("evAdd").onclick=()=>{
+ const n=$("evName").value.trim().slice(0,40),v=$("evDate").value,msg=$("evMsg");
+ if(!n){msg.textContent="பெயரை எழுதுங்கள்";return}
+ if(!/^\d{4}-\d\d-\d\d$/.test(v)){msg.textContent="தேதியைத் தேர்ந்தெடுங்கள்";return}
+ const l=loadEv();if(l.length>=200){msg.textContent="இடம் நிறைந்துவிட்டது";return}
+ l.push({n:n,t:$("evType").value==="a"?"a":"b",md:v.slice(5)});saveEv(l);
+ msg.textContent="";$("evName").value="";$("evDate").value="";renderEvList();renderEv();
+};
+$("wiClose").onclick=closeSheet;
+$("wiCopy").onclick=async()=>{const b=$("wiCopy"),ok=await copyText($("wishArea").value);flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
+$("wiShare").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent($("wishArea").value)};
+$("wiImg").onclick=()=>shareImage($("wiImg"),"🖼️ படம் பகிர",curWish);
+$("wiSave").onclick=()=>saveImage($("wiSave"),"💾 படம் Save",curWish);
 mode=autoMode();
 render();setInterval(updateClock,30000);
 fetch("messages.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(j=>{if(Array.isArray(j)&&j.length){AI=j;render()}}).catch(e=>console.warn(e));
