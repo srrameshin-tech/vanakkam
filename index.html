@@ -106,7 +106,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <h3>⚙️ Settings</h3>
     <label for="setName">பெயர்</label><input type="text" id="setName" maxlength="40">
     <label for="setCity">ஊர்</label><input type="text" id="setCity" maxlength="40">
-    <label for="setSize">படத்தின் அளவு</label><select id="setSize"><option value="45">Chat (4:5)</option><option value="916">WhatsApp Status (9:16)</option></select>
+    <label for="setSize">படத்தின் அளவு</label><select id="setSize"><option value="45">Chat (4:5)</option><option value="916">WhatsApp Status (நீளமான)</option></select>
     <label class="chk"><input type="checkbox" id="setFoot"> செய்தியின் கடைசியில் பெயர் காட்டு</label>
     <div class="row"><button id="setSave" type="button">💾 Save</button><button id="setClose" type="button">✖ மூடு</button></div>
   </div>
@@ -353,7 +353,6 @@ function render(){
 }
 function makeMessage(){
  const T=titles(), now=new Date();
- const date=new Intl.DateTimeFormat("ta-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).format(now);
  const time=new Intl.DateTimeFormat("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true}).format(now);
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(x=>[x.type,x.value]));
  const dateEn=`${P.weekday}, ${P.day} ${P.month} ${P.year}`;
@@ -445,7 +444,7 @@ function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.i
 function flower(x,cx,cy,r,n,c1,c2,c3){x.save();x.translate(cx,cy);for(let i=0;i<n;i++){x.save();x.rotate(i*2*Math.PI/n);x.beginPath();x.ellipse(0,-r*.62,r*.34,r*.62,0,0,Math.PI*2);x.fillStyle=i%2?c1:c2;x.fill();x.restore()}x.beginPath();x.arc(0,0,r*.28,0,Math.PI*2);x.fillStyle=c3;x.fill();x.restore()}
 function star(x,cx,cy,r,col,a){x.save();x.globalAlpha=a;x.fillStyle=col;x.beginPath();for(let i=0;i<8;i++){const rad=i%2?r*.28:r,ang=i*Math.PI/4-Math.PI/2;x.lineTo(cx+Math.cos(ang)*rad,cy+Math.sin(ang)*rad)}x.closePath();x.fill();x.restore()}
 function drawCard(over){
- const W=1080,H=loadSet().sz==="916"?1920:1350,dy=(H-1350)/2,c=document.createElement("canvas");c.width=W;c.height=H;
+ const W=1080,H=loadSet().sz==="916"?1705:1350,dy=H>1350?70:0,bx=H-1350-dy,c=document.createElement("canvas");c.width=W;c.height=H;
  const x=c.getContext("2d"),M=(over&&over.bright)?true:mode==="morning",T=over||titles(),item=T.item,now=new Date(),R=rng(dayCount()*131+(M?1:2)+(over?7:0)),TH=(M?TM:TN)[now.getDay()];
  x.textAlign="center";x.textBaseline="alphabetic";
  // sky
@@ -460,7 +459,7 @@ function drawCard(over){
   const sd=x.createRadialGradient(525,120,5,540,135,62);sd.addColorStop(0,"#fffde7");sd.addColorStop(.45,"#ffca28");sd.addColorStop(1,"#ff8f00");x.beginPath();x.arc(540,135,62,0,Math.PI*2);x.fillStyle=sd;x.fill();
   x.strokeStyle="#8d3b1f";x.lineWidth=5;for(const [bx,by,s] of [[170,130,1],[235,175,.8],[900,115,1.1],[835,165,.7]]){x.beginPath();x.moveTo(bx-26*s,by);x.quadraticCurveTo(bx-12*s,by-18*s,bx,by);x.quadraticCurveTo(bx+12*s,by-18*s,bx+26*s,by);x.stroke()}
  }else{
-  for(let i=0;i<70;i++){const sx=R()*W,sy=R()*(1000+2*dy)-dy;star(x,sx,sy,3+R()*7,R()>.6?"#ffe082":"#ffffff",.35+R()*.6)}
+  for(let i=0;i<70;i++){const sx=R()*W,sy=R()*(H-350)-dy;star(x,sx,sy,3+R()*7,R()>.6?"#ffe082":"#ffffff",.35+R()*.6)}
   const gl=x.createRadialGradient(540,135,10,540,135,230);gl.addColorStop(0,"rgba(255,244,196,.6)");gl.addColorStop(1,"rgba(255,244,196,0)");x.fillStyle=gl;x.fillRect(240,-300,600,680);
   const off=document.createElement("canvas");off.width=240;off.height=240;const o=off.getContext("2d");
   o.fillStyle="#fff3c4";o.beginPath();o.arc(120,120,64,0,Math.PI*2);o.fill();o.globalCompositeOperation="destination-out";o.beginPath();o.arc(150,102,56,0,Math.PI*2);o.fill();
@@ -471,14 +470,14 @@ function drawCard(over){
  hb.addColorStop(0,TH.hb[0]);hb.addColorStop(1,TH.hb[1]);hf.addColorStop(0,TH.hf[0]);hf.addColorStop(1,TH.hf[1]);
  x.fillStyle=hb;x.beginPath();x.moveTo(0,1120);x.bezierCurveTo(250,1040,500,1100,720,1060);x.bezierCurveTo(880,1030,1000,1080,1080,1050);x.lineTo(W,H);x.lineTo(0,H);x.fill();
  x.fillStyle=hf;x.beginPath();x.moveTo(0,1230);x.bezierCurveTo(200,1180,420,1250,640,1210);x.bezierCurveTo(820,1180,960,1230,1080,1200);x.lineTo(W,H);x.lineTo(0,H);x.fill();
- if(M){const cols=[TH.fa,TH.fb,["#ffca28","#ffe082"],[TH.fa[1],TH.fb[0]]];for(let i=0;i<14;i++){const k=cols[i%4];flower(x,30+R()*(W-60),1270+R()*(70+dy),14+R()*12,6,k[0],k[1],"#fff59d")}}
- else{for(let i=0;i<22;i++){const fx=R()*W,fy=1130+R()*(200+dy),gl=x.createRadialGradient(fx,fy,0,fx,fy,16);gl.addColorStop(0,"rgba(255,235,120,1)");gl.addColorStop(1,"rgba(255,235,120,0)");x.fillStyle=gl;x.beginPath();x.arc(fx,fy,16,0,Math.PI*2);x.fill()}}
+ if(M){const cols=[TH.fa,TH.fb,["#ffca28","#ffe082"],[TH.fa[1],TH.fb[0]]];for(let i=0;i<14;i++){const k=cols[i%4];flower(x,30+R()*(W-60),1270+R()*(70+bx),14+R()*12,6,k[0],k[1],"#fff59d")}}
+ else{for(let i=0;i<22;i++){const fx=R()*W,fy=1130+R()*(200+bx),gl=x.createRadialGradient(fx,fy,0,fx,fy,16);gl.addColorStop(0,"rgba(255,235,120,1)");gl.addColorStop(1,"rgba(255,235,120,0)");x.fillStyle=gl;x.beginPath();x.arc(fx,fy,16,0,Math.PI*2);x.fill()}}
  // date pill
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(y=>[y.type,y.value]));
  const dt=(over?"":"#"+dayLabel()+"  •  ")+P.weekday+", "+P.day+" "+P.month+" "+P.year;
- x.font="700 34px "+LAT;const dw=x.measureText(dt).width+70;
- rr(x,540-dw/2,262,dw,56,28);x.fillStyle=M?"rgba(255,255,255,.80)":"rgba(255,255,255,.14)";x.fill();x.lineWidth=2;x.strokeStyle=M?"rgba(230,81,0,.5)":"rgba(255,213,79,.6)";x.stroke();
- x.fillStyle=M?dk(TH.date,.15):TH.date;boldFill(x,dt,540,301,1.4);
+ x.font="700 44px "+LAT;const dw=x.measureText(dt).width+84;
+ rr(x,540-dw/2,258,dw,66,33);x.fillStyle=M?"rgba(255,255,255,.80)":"rgba(255,255,255,.14)";x.fill();x.lineWidth=2;x.strokeStyle=M?"rgba(230,81,0,.5)":"rgba(255,213,79,.6)";x.stroke();
+ x.fillStyle=M?dk(TH.date,.15):TH.date;boldFill(x,dt,540,306,1.4);
  // panel
  const px=56,py=340,pw=W-112,ph=860;
  x.save();x.shadowColor=M?"rgba(120,40,0,.30)":"rgba(0,0,0,.45)";x.shadowBlur=44;x.shadowOffsetY=16;rr(x,px,py,pw,ph,46);x.fillStyle=M?"rgba(255,255,255,.92)":TH.panel;x.fill();x.restore();
