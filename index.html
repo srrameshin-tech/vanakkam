@@ -60,9 +60,9 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <div id="evNote" style="display:none"></div>
     <article class="card" aria-live="polite">
       <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
-      <div class="lang">தமிழ்</div>
+      <div class="lang" id="lblTa">தமிழ்</div>
       <p class="message" id="tamilText"></p>
-      <div class="lang">ENGLISH</div>
+      <div class="lang" id="lblEn">ENGLISH</div>
       <p class="message english" id="englishText"></p>
     </article>
     <div class="actions">
@@ -107,7 +107,11 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <label for="setName">பெயர்</label><input type="text" id="setName" maxlength="40">
     <label for="setCity">ஊர்</label><input type="text" id="setCity" maxlength="40">
     <label for="setSize">படத்தின் அளவு</label><select id="setSize"><option value="45">Chat (4:5)</option><option value="916">WhatsApp Status (நீளமான)</option></select>
+    <label for="setLang">செய்தி மொழி</label><select id="setLang"><option value="both">தமிழ் + English</option><option value="ta">தமிழ் மட்டும்</option><option value="en">English மட்டும்</option></select>
     <label class="chk"><input type="checkbox" id="setFoot"> செய்தியின் கடைசியில் பெயர் காட்டு</label>
+    <div class="row"><button id="expBtn" type="button">💾 Export</button><button id="impBtn" type="button">📥 Import</button></div>
+    <input type="file" id="impFile" accept=".json,application/json" style="display:none">
+    <div class="hint2" id="setMsg"></div>
     <div class="row"><button id="setSave" type="button">💾 Save</button><button id="setClose" type="button">✖ மூடு</button></div>
   </div>
 </div>
@@ -275,7 +279,9 @@ function titles(){
 }
 /* ---- settings (name, city, footer on/off) ---- */
 const SET_KEY="vanakkam_settings_v1";
-function loadSet(){const d={name:"Ramesh",city:"Coimbatore",foot:true,sz:"45"};try{const o=JSON.parse(localStorage.getItem(SET_KEY)||"{}");if(typeof o.name==="string")d.name=o.name;if(typeof o.city==="string")d.city=o.city;if(typeof o.foot==="boolean")d.foot=o.foot;if(o.sz==="916"||o.sz==="45")d.sz=o.sz}catch(e){console.warn(e)}return d}
+function sanitizeSet(o){const d={name:"Ramesh",city:"Coimbatore",foot:true,sz:"45",lang:"both"};if(o&&typeof o==="object"){if(typeof o.name==="string")d.name=o.name.slice(0,40);if(typeof o.city==="string")d.city=o.city.slice(0,40);if(typeof o.foot==="boolean")d.foot=o.foot;if(o.sz==="916"||o.sz==="45")d.sz=o.sz;if(o.lang==="both"||o.lang==="ta"||o.lang==="en")d.lang=o.lang}return d}
+function loadSet(){try{return sanitizeSet(JSON.parse(localStorage.getItem(SET_KEY)||"{}"))}catch(e){console.warn(e);return sanitizeSet({})}}
+function langInfo(){const l=loadSet().lang;return{ta:l!=="en",en:l!=="ta"}}
 function footerText(){const s=loadSet();return s.foot?[s.name.trim(),s.city.trim()].filter(Boolean).join(", "):""}
 
 /* ---- birthdays / anniversaries (stored only on this phone) ---- */
@@ -307,7 +313,7 @@ function wishFor(ev){
  const b=ev.t==="b",list=b?BW:AW,w=list[hashStr(ev.n+new Date().getFullYear())%list.length],nm=ev.n.trim();
  return{ta:(b?"பிறந்தநாள் வாழ்த்துகள், ":"திருமண நாள் வாழ்த்துகள், ")+nm+"!",en:(b?"HAPPY BIRTHDAY, ":"HAPPY ANNIVERSARY, ")+nm.toUpperCase()+"!",item:[w[0].split("{n}").join(nm),w[1].split("{n}").join(nm)],fest:true,bright:true};
 }
-function wishText(w){const ft=footerText();return"🎉 *"+w.ta+"*\n━━━━━━━━━━━━━━\n\n"+w.item[0]+"\n\n*"+w.en+"*\n"+w.item[1]+(ft?"\n\n━━━━━━━━━━━━━━\n🙏 *"+ft+"*":"")}
+function wishText(w){const ft=footerText(),G=langInfo();const body=(G.ta?"*"+w.ta+"*\n"+w.item[0]:"")+(G.ta&&G.en?"\n\n":"")+(G.en?"*"+w.en+"*\n"+w.item[1]:"");return"🎉 ━━━━━━━━━━━━━━\n\n"+body+(ft?"\n\n━━━━━━━━━━━━━━\n🙏 *"+ft+"*":"")}
 let curWish=null;
 function openWish(ev){curWish=wishFor(ev);$("wishTitle").textContent=(ev.t==="b"?"🎂 ":"💑 ")+ev.n;$("wishArea").value=wishText(curWish);showSheet("wish")}
 function renderEv(){
@@ -346,6 +352,7 @@ function render(){
  const T=titles();
  $("greeting").textContent=(T.fest?"🎉 ":(mode==="morning"?"🌅 ":"🌙 "))+T.ta;
  $("tamilText").textContent=T.item[0]; $("englishText").textContent=T.item[1];
+ const G=langInfo();$("lblTa").style.display=$("tamilText").style.display=G.ta?"":"none";$("lblEn").style.display=$("englishText").style.display=G.en?"":"none";
  const fn=$("festNote");if(T.fest){fn.style.display="block";fn.textContent="🎉 இன்று சிறப்பு நாள்: "+T.ta.replace("!","")}else{fn.style.display="none"}
  $("morningTab").classList.toggle("active",mode==="morning");
  $("nightTab").classList.toggle("active",mode==="night");
@@ -357,8 +364,9 @@ function makeMessage(){
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(x=>[x.type,x.value]));
  const dateEn=`${P.weekday}, ${P.day} ${P.month} ${P.year}`;
  const LN="━━━━━━━━━━━━━━", M=mode==="morning";
- const ft=footerText();
- return `${T.fest?"🎉":(M?"🌅":"🌙")} *#${dayLabel()}* | ${dateEn} | ${time}\n${LN}\n\n*${T.ta}*\n${T.item[0]}\n\n*${T.en}*\n${T.item[1]}${ft?`\n\n${LN}\n🙏 *${ft}*`:""}`;
+ const ft=footerText(),G=langInfo();
+ const body=(G.ta?`*${T.ta}*\n${T.item[0]}`:"")+(G.ta&&G.en?"\n\n":"")+(G.en?`*${T.en}*\n${T.item[1]}`:"");
+ return `${T.fest?"🎉":(M?"🌅":"🌙")} *#${dayLabel()}* | ${dateEn} | ${time}\n${LN}\n\n${body}${ft?`\n\n${LN}\n🙏 *${ft}*`:""}`;
 }
 $("morningTab").onclick=()=>{manualMode=true;mode="morning";variation=0;render()};
 $("nightTab").onclick=()=>{manualMode=true;mode="night";variation=0;render()};
@@ -489,24 +497,28 @@ function drawCard(over){
  flower(x,px+14,py+ph-14,40,8,fb[0],fb[1],fb[2]);flower(x,px+pw-14,py+ph-14,40,8,fa[0],fa[1],fa[2]);
  // text
  const ink=TH.ink,tTa=TH.tTa,tEn=M?dk(TH.tEn,.25):TH.tEn,bEn=M?dk(TH.ink,.35):(TH.bEn||TH.ink);
- const maxW=pw-120,avail=ph-96,titTa=T.ta,titEn=T.en;
+ const LG=langInfo(),both=LG.ta&&LG.en,maxW=pw-120,avail=ph-96,titTa=T.ta,titEn=T.en,bs=both?1:1.25;
  let L=null;
  for(let sc=1;sc>=.45;sc-=.03){
-  const sM=54*sc;
-  x.font="800 "+(60*sc)+"px "+FONT;const wT=x.measureText(titTa).width;
-  x.font="800 "+(60*sc)+"px "+LAT;const wE=x.measureText(titEn).width;
-  const sT=Math.min(60*sc,60*sc*maxW/wT,60*sc*maxW/wE);
-  x.font="700 "+sM+"px "+FONT;const la=wrapLines(x,item[0],maxW);
-  x.font="800 "+sM+"px "+LAT;const le=wrapLines(x,item[1],maxW);
-  const h=sT*1.3+la.length*sM*1.55+60+sT*1.35+le.length*sM*1.55;
+  const sM=54*bs*sc;
+  x.font="800 "+(60*bs*sc)+"px "+FONT;const wT=LG.ta?x.measureText(titTa).width:1;
+  x.font="800 "+(60*bs*sc)+"px "+LAT;const wE=LG.en?x.measureText(titEn).width:1;
+  const sT=Math.min(60*bs*sc,LG.ta?60*bs*sc*maxW/wT:1e9,LG.en?60*bs*sc*maxW/wE:1e9);
+  x.font="700 "+sM+"px "+FONT;const la=LG.ta?wrapLines(x,item[0],maxW):[];
+  x.font="800 "+sM+"px "+LAT;const le=LG.en?wrapLines(x,item[1],maxW):[];
+  const h=(LG.ta?sT*1.3+la.length*sM*1.55:0)+(both?60:0)+(LG.en?sT*1.35+le.length*sM*1.55:0);
   L={sT,sM,la,le,h};if(h<=avail)break;
  }
- let y=py+(ph-L.h)/2+L.sT;
- x.font="800 "+L.sT+"px "+FONT;x.fillStyle=tTa;drawLine(x,titTa,540,y,L.sT*.04);y+=L.sT*.3;
- x.font="700 "+L.sM+"px "+FONT;x.fillStyle=ink;for(const t of L.la){y+=L.sM*1.55;drawLine(x,t,540,y,L.sM*.035)}
- y+=34;x.save();x.globalAlpha=.6;x.fillStyle=tEn;x.fillRect(540-150,y,110,4);x.fillRect(540+40,y,110,4);x.restore();flower(x,540,y+2,15,6,fa[0],fa[1],fa[2]);y+=22;
- x.font="800 "+L.sT+"px "+LAT;x.fillStyle=tEn;y+=L.sT*1.1;boldFill(x,titEn,540,y,L.sT*.04);
- x.font="800 "+L.sM+"px "+LAT;x.fillStyle=bEn;for(const t of L.le){y+=L.sM*1.55;boldFill(x,t,540,y,L.sM*.04)}
+ let y=py+(ph-L.h)/2+(LG.ta?L.sT:0);
+ if(LG.ta){
+  x.font="800 "+L.sT+"px "+FONT;x.fillStyle=tTa;drawLine(x,titTa,540,y,L.sT*.04);y+=L.sT*.3;
+  x.font="700 "+L.sM+"px "+FONT;x.fillStyle=ink;for(const t of L.la){y+=L.sM*1.55;drawLine(x,t,540,y,L.sM*.035)}
+ }
+ if(both){y+=34;x.save();x.globalAlpha=.6;x.fillStyle=tEn;x.fillRect(540-150,y,110,4);x.fillRect(540+40,y,110,4);x.restore();flower(x,540,y+2,15,6,fa[0],fa[1],fa[2]);y+=22}
+ if(LG.en){
+  x.font="800 "+L.sT+"px "+LAT;x.fillStyle=tEn;y+=L.sT*1.1;boldFill(x,titEn,540,y,L.sT*.04);
+  x.font="800 "+L.sM+"px "+LAT;x.fillStyle=bEn;for(const t of L.le){y+=L.sM*1.55;boldFill(x,t,540,y,L.sM*.04)}
+ }
  // footer pill
  const ft=footerText();
  if(ft){
@@ -546,9 +558,10 @@ $("edReset").onclick=()=>{$("editArea").value=makeMessage()};
 $("edClose").onclick=closeSheet;
 $("edCopy").onclick=async()=>{const b=$("edCopy"),ok=await copyText($("editArea").value);if(ok)markSent();flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
 $("edShare").onclick=()=>{markSent();location.href="https://wa.me/?text="+encodeURIComponent($("editArea").value)};
-$("settingsBtn").onclick=()=>{const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;$("setSize").value=s.sz;showSheet("set")};
+function fillSettings(){const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;$("setSize").value=s.sz;$("setLang").value=s.lang;$("setMsg").textContent=""}
+$("settingsBtn").onclick=()=>{fillSettings();showSheet("set")};
 $("setClose").onclick=closeSheet;
-$("setSave").onclick=()=>{const o={name:$("setName").value.trim().slice(0,40),city:$("setCity").value.trim().slice(0,40),foot:$("setFoot").checked,sz:$("setSize").value==="916"?"916":"45"};try{localStorage.setItem(SET_KEY,JSON.stringify(o))}catch(e){console.warn(e)}closeSheet();render()};
+$("setSave").onclick=()=>{const o={name:$("setName").value.trim().slice(0,40),city:$("setCity").value.trim().slice(0,40),foot:$("setFoot").checked,sz:$("setSize").value==="916"?"916":"45",lang:["both","ta","en"].indexOf($("setLang").value)>=0?$("setLang").value:"both"};try{localStorage.setItem(SET_KEY,JSON.stringify(o))}catch(e){console.warn(e)}closeSheet();render()};
 $("evBtn").onclick=()=>{$("evMsg").textContent="";renderEvList();showSheet("ev")};
 $("evClose").onclick=closeSheet;
 $("evAdd").onclick=()=>{
@@ -564,6 +577,19 @@ $("wiCopy").onclick=async()=>{const b=$("wiCopy"),ok=await copyText($("wishArea"
 $("wiShare").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent($("wishArea").value)};
 $("wiImg").onclick=()=>shareImage($("wiImg"),"🖼️ படம் பகிர",curWish);
 $("wiSave").onclick=()=>saveImage($("wiSave"),"💾 படம் Save",curWish);
+function exportData(){const o={app:"vanakkam",v:1,saved:todayKey(),settings:loadSet(),events:loadEv()};downloadBlob(new Blob([JSON.stringify(o,null,1)],{type:"application/json"}),"vanakkam-data-"+todayKey()+".json")}
+function importData(txt){
+ let o;try{o=JSON.parse(txt)}catch(e){return{ok:false,msg:"இந்தக் கோப்பைப் படிக்க முடியவில்லை"}}
+ if(!o||o.app!=="vanakkam")return{ok:false,msg:"இது Vanakkam கோப்பு அல்ல"};
+ const set=sanitizeSet(o.settings);
+ const ev=(Array.isArray(o.events)?o.events:[]).filter(e=>e&&typeof e.n==="string"&&/^\d\d-\d\d$/.test(e.md)&&(e.t==="b"||e.t==="a")).slice(0,200).map(e=>({n:e.n.slice(0,40),t:e.t,md:e.md}));
+ try{localStorage.setItem(SET_KEY,JSON.stringify(set));localStorage.setItem(EV_KEY,JSON.stringify(ev))}catch(e){console.warn(e);return{ok:false,msg:"Save செய்ய முடியவில்லை"}}
+ return{ok:true,msg:"✅ Import ஆனது ("+ev.length+" நாட்கள்)"};
+}
+function readFile(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=()=>rej(new Error("read"));r.readAsText(f)})}
+$("expBtn").onclick=()=>{try{exportData();$("setMsg").textContent="✅ கோப்பு Save ஆனது"}catch(e){console.warn(e);$("setMsg").textContent="மீண்டும் முயற்சிக்கவும்"}};
+$("impBtn").onclick=()=>$("impFile").click();
+$("impFile").onchange=async ev=>{const f=ev.target.files&&ev.target.files[0];if(!f)return;try{const r=importData(await readFile(f));$("setMsg").textContent=r.msg;if(r.ok){fillSettings();$("setMsg").textContent=r.msg;render()}}catch(e){console.warn(e);$("setMsg").textContent="இந்தக் கோப்பைப் படிக்க முடியவில்லை"}ev.target.value=""};
 mode=autoMode();
 render();setInterval(updateClock,30000);
 fetch("messages.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(j=>{if(Array.isArray(j)&&j.length){AI=j;render()}}).catch(e=>console.warn(e));
