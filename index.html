@@ -34,6 +34,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
 .sheet .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.sheet .row button{background:#eef1f8;color:var(--navy)}
 .hint{font-size:13px;color:#b42318;min-height:18px;margin-top:6px}.hint2{font-size:14px;color:var(--muted);padding:6px 0}
 .evrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f8;font-size:15px}
+.evuse{border:0;background:#e7f7ee;color:#0a7a3c;border-radius:10px;padding:6px 11px;font-size:14px;font-weight:700}
 .evdel{border:0;background:#fde8e8;color:#b42318;border-radius:10px;padding:6px 11px;font-size:15px}
 .evbtn{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;padding:13px;font-size:16px;font-weight:700;background:#ffe4ef;color:#9d174d}
 </style>
@@ -58,6 +59,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <div class="sent" id="sentNote" style="display:none"></div>
     <div class="fest" id="festNote" style="display:none"></div>
     <div id="evNote" style="display:none"></div>
+    <div class="fest" id="ovrNote" style="display:none;cursor:pointer"></div>
     <article class="card" aria-live="polite">
       <h2 id="greeting">🌅 காலை வணக்கம்!</h2>
       <div class="lang" id="lblTa">தமிழ்</div>
@@ -73,6 +75,8 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
       <button class="wide" id="saveWaBtn" type="button">📲 Save செய்து WhatsApp திற</button>
       <button id="editBtn" type="button">✏️ திருத்து</button>
       <button id="settingsBtn" type="button">⚙️ Settings</button>
+      <button id="favBtn" type="button">☆ Save</button>
+      <button id="favListBtn" type="button">⭐ பிடித்தவை</button>
       <button class="wide" id="evBtn" type="button">🎂 பிறந்தநாள் / திருமண நாள்</button>
       <button class="primary wide" id="shareBtn" type="button">📲 WhatsApp-ல் பகிரவும்</button>
       <button class="wide" id="installBtn" type="button" style="display:none">⬇️ மொபைலில் Install செய்யவும்</button>
@@ -86,6 +90,11 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <h3>✏️ செய்தியைத் திருத்து</h3>
     <textarea id="editArea"></textarea>
     <div class="row"><button id="edCopy" type="button">📋 Copy</button><button id="edShare" type="button">📲 WhatsApp</button><button id="edReset" type="button">↩️ மீட்டமை</button><button id="edClose" type="button">✖ மூடு</button></div>
+  </div>
+  <div class="sheet" id="favSheet" style="display:none">
+    <h3>⭐ பிடித்த செய்திகள்</h3>
+    <div id="favList"></div>
+    <div class="row" style="grid-template-columns:1fr"><button id="favClose" type="button">✖ மூடு</button></div>
   </div>
   <div class="sheet" id="wishSheet" style="display:none">
     <h3 id="wishTitle">🎉 வாழ்த்து</h3>
@@ -272,10 +281,40 @@ function festInfo(){
  return FEST[y+"-"+m+"-"+d]||FEST[m+"-"+d]||null;
 }
 function titles(){
+ const M=mode==="morning",gTa=M?"காலை வணக்கம்!":"இரவு வணக்கம்!",gEn=M?"GOOD MORNING!":"GOOD NIGHT!";
+ const O=variation===0?loadOvr():null;
+ if(O)return{ta:gTa,en:gEn,item:O.item,fest:false,ovr:true};
  const F=festInfo();
  if(F)return{ta:F.t[0],en:F.t[1],item:F.x,fest:true};
- const M=mode==="morning";
- return{ta:M?"காலை வணக்கம்!":"இரவு வணக்கம்!",en:M?"GOOD MORNING!":"GOOD NIGHT!",item:pickItem(),fest:false};
+ return{ta:gTa,en:gEn,item:pickItem(),fest:false};
+}
+/* ---- favourite messages (stored only on this phone) ---- */
+const FAV_KEY="vanakkam_favs_v1",OVR_KEY="vanakkam_ovr_v1";
+function cleanFavs(a){return(Array.isArray(a)?a:[]).filter(f=>f&&typeof f.ta==="string"&&typeof f.en==="string"&&f.ta&&f.en).slice(0,100).map(f=>({ta:f.ta.slice(0,300),en:f.en.slice(0,300)}))}
+function loadFav(){try{return cleanFavs(JSON.parse(localStorage.getItem(FAV_KEY)||"[]"))}catch(e){console.warn(e);return[]}}
+function saveFav(a){try{localStorage.setItem(FAV_KEY,JSON.stringify(cleanFavs(a)))}catch(e){console.warn(e)}}
+function sameItem(f,it){return f.ta===it[0]&&f.en===it[1]}
+function toggleFav(){const it=titles().item,a=loadFav(),i=a.findIndex(f=>sameItem(f,it));if(i>=0)a.splice(i,1);else a.unshift({ta:it[0],en:it[1]});saveFav(a);renderFav()}
+function loadOvr(){try{const o=JSON.parse(localStorage.getItem(OVR_KEY)||"null");if(o&&o.d===todayKey()&&o.mode===mode&&Array.isArray(o.item)&&typeof o.item[0]==="string"&&typeof o.item[1]==="string")return o}catch(e){console.warn(e)}return null}
+function setOvr(f){try{localStorage.setItem(OVR_KEY,JSON.stringify({d:todayKey(),mode:mode,item:[f.ta,f.en]}))}catch(e){console.warn(e)}}
+function clearOvr(){try{localStorage.removeItem(OVR_KEY)}catch(e){console.warn(e)}}
+function renderFav(){
+ const it=titles().item,on=loadFav().some(f=>sameItem(f,it));
+ $("favBtn").textContent=on?"⭐ Saved":"☆ Save";
+ const n=$("ovrNote");if(titles().ovr){n.style.display="block";n.textContent="⭐ பிடித்த செய்தி பயன்படுத்தப்படுகிறது (நீக்க தொடவும்)"}else{n.style.display="none"}
+}
+function renderFavList(){
+ const box=$("favList"),a=loadFav();box.textContent="";
+ if(!a.length){const p=document.createElement("div");p.className="hint2";p.textContent="இன்னும் எதுவும் சேமிக்கவில்லை. செய்தி பிடித்திருந்தால் ☆ Save தொடுங்கள்.";box.appendChild(p);return}
+ a.forEach((f,i)=>{
+  const r=document.createElement("div");r.className="evrow";
+  const t=document.createElement("span");t.textContent=f.ta.length>70?f.ta.slice(0,70)+"…":f.ta;
+  const u=document.createElement("button");u.type="button";u.className="evuse";u.textContent="✔ இன்று";
+  u.onclick=()=>{setOvr(f);variation=0;closeSheet();render()};
+  const d=document.createElement("button");d.type="button";d.className="evdel";d.textContent="✖";
+  d.onclick=()=>{const l=loadFav();l.splice(i,1);saveFav(l);renderFavList();renderFav()};
+  r.appendChild(t);r.appendChild(u);r.appendChild(d);box.appendChild(r);
+ });
 }
 /* ---- settings (name, city, footer on/off) ---- */
 const SET_KEY="vanakkam_settings_v1";
@@ -356,7 +395,7 @@ function render(){
  const fn=$("festNote");if(T.fest){fn.style.display="block";fn.textContent="🎉 இன்று சிறப்பு நாள்: "+T.ta.replace("!","")}else{fn.style.display="none"}
  $("morningTab").classList.toggle("active",mode==="morning");
  $("nightTab").classList.toggle("active",mode==="night");
- updateClock(); renderSent(); renderEv();
+ updateClock(); renderSent(); renderEv(); renderFav();
 }
 function makeMessage(){
  const T=titles(), now=new Date();
@@ -550,7 +589,7 @@ async function saveImage(b,old,over,thenWa){
 $("imgBtn").onclick=()=>shareImage($("imgBtn"),"🖼️ படமாகப் பகிர");
 $("saveBtn").onclick=()=>saveImage($("saveBtn"),"💾 படம் Save");
 $("saveWaBtn").onclick=()=>saveImage($("saveWaBtn"),"📲 Save செய்து WhatsApp திற",undefined,true);
-function showSheet(w){$("ov").style.display="flex";for(const k of["edit","set","wish","ev"])$(k+"Sheet").style.display=k===w?"block":"none"}
+function showSheet(w){$("ov").style.display="flex";for(const k of["edit","set","wish","ev","fav"])$(k+"Sheet").style.display=k===w?"block":"none"}
 function closeSheet(){$("ov").style.display="none"}
 $("ov").onclick=e=>{if(e.target===$("ov"))closeSheet()};
 $("editBtn").onclick=()=>{$("editArea").value=makeMessage();showSheet("edit")};
@@ -577,19 +616,24 @@ $("wiCopy").onclick=async()=>{const b=$("wiCopy"),ok=await copyText($("wishArea"
 $("wiShare").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent($("wishArea").value)};
 $("wiImg").onclick=()=>shareImage($("wiImg"),"🖼️ படம் பகிர",curWish);
 $("wiSave").onclick=()=>saveImage($("wiSave"),"💾 படம் Save",curWish);
-function exportData(){const o={app:"vanakkam",v:1,saved:todayKey(),settings:loadSet(),events:loadEv()};downloadBlob(new Blob([JSON.stringify(o,null,1)],{type:"application/json"}),"vanakkam-data-"+todayKey()+".json")}
+function exportData(){const o={app:"vanakkam",v:1,saved:todayKey(),settings:loadSet(),events:loadEv(),favs:loadFav()};downloadBlob(new Blob([JSON.stringify(o,null,1)],{type:"application/json"}),"vanakkam-data-"+todayKey()+".json")}
 function importData(txt){
  let o;try{o=JSON.parse(txt)}catch(e){return{ok:false,msg:"இந்தக் கோப்பைப் படிக்க முடியவில்லை"}}
  if(!o||o.app!=="vanakkam")return{ok:false,msg:"இது Vanakkam கோப்பு அல்ல"};
  const set=sanitizeSet(o.settings);
  const ev=(Array.isArray(o.events)?o.events:[]).filter(e=>e&&typeof e.n==="string"&&/^\d\d-\d\d$/.test(e.md)&&(e.t==="b"||e.t==="a")).slice(0,200).map(e=>({n:e.n.slice(0,40),t:e.t,md:e.md}));
- try{localStorage.setItem(SET_KEY,JSON.stringify(set));localStorage.setItem(EV_KEY,JSON.stringify(ev))}catch(e){console.warn(e);return{ok:false,msg:"Save செய்ய முடியவில்லை"}}
- return{ok:true,msg:"✅ Import ஆனது ("+ev.length+" நாட்கள்)"};
+ const fv=cleanFavs(o.favs);
+ try{localStorage.setItem(SET_KEY,JSON.stringify(set));localStorage.setItem(EV_KEY,JSON.stringify(ev));localStorage.setItem(FAV_KEY,JSON.stringify(fv))}catch(e){console.warn(e);return{ok:false,msg:"Save செய்ய முடியவில்லை"}}
+ return{ok:true,msg:"✅ Import ஆனது ("+ev.length+" நாட்கள், "+fv.length+" ⭐)"};
 }
 function readFile(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=()=>rej(new Error("read"));r.readAsText(f)})}
 $("expBtn").onclick=()=>{try{exportData();$("setMsg").textContent="✅ கோப்பு Save ஆனது"}catch(e){console.warn(e);$("setMsg").textContent="மீண்டும் முயற்சிக்கவும்"}};
 $("impBtn").onclick=()=>$("impFile").click();
 $("impFile").onchange=async ev=>{const f=ev.target.files&&ev.target.files[0];if(!f)return;try{const r=importData(await readFile(f));$("setMsg").textContent=r.msg;if(r.ok){fillSettings();$("setMsg").textContent=r.msg;render()}}catch(e){console.warn(e);$("setMsg").textContent="இந்தக் கோப்பைப் படிக்க முடியவில்லை"}ev.target.value=""};
+$("favBtn").onclick=toggleFav;
+$("favListBtn").onclick=()=>{renderFavList();showSheet("fav")};
+$("favClose").onclick=closeSheet;
+$("ovrNote").onclick=()=>{clearOvr();render()};
 mode=autoMode();
 render();setInterval(updateClock,30000);
 fetch("messages.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(j=>{if(Array.isArray(j)&&j.length){AI=j;render()}}).catch(e=>console.warn(e));
