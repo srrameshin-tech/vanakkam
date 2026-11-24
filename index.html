@@ -100,7 +100,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
     <h3 id="wishTitle">🎉 வாழ்த்து</h3>
     <textarea id="wishArea"></textarea>
     <div class="row"><button id="wiCopy" type="button">📋 Copy</button><button id="wiShare" type="button">📲 WhatsApp</button><button id="wiImg" type="button">🖼️ படம் பகிர</button><button id="wiSave" type="button">💾 படம் Save</button></div>
-    <div class="row" style="grid-template-columns:1fr"><button id="wiClose" type="button">✖ மூடு</button></div>
+    <div class="row"><button id="wiNext" type="button">🔄 வேறு வாழ்த்து</button><button id="wiClose" type="button">✖ மூடு</button></div>
   </div>
   <div class="sheet" id="evSheet" style="display:none">
     <h3>🎂 பிறந்தநாள் / திருமண நாள்</h3>
@@ -339,22 +339,54 @@ const BW=[
 ["{n}, உங்கள் கனவுகள் அனைத்தும் இந்த வருடம் நனவாகட்டும். இனிய பிறந்தநாள் வாழ்த்துகள்! 🎉","{n}, may all your dreams come true this year. Happy Birthday! 🎉"],
 ["அன்பும் நலமும் வெற்றியும் உங்களைத் தேடி வரட்டும், {n}. இனிய பிறந்தநாள்! 🎁","May love, health and success come looking for you, {n}. Happy Birthday! 🎁"],
 ["இறைவன் அருளால் நீங்கள் நீடூழி வாழ்ந்து எல்லா நலனும் பெற வாழ்த்துகிறோம், {n}. பிறந்தநாள் நல்வாழ்த்துகள்! 🙏","By God's grace, we wish you a long life and every good thing, {n}. Happy Birthday! 🙏"],
-["இன்று உங்கள் நாள், {n}! சிரிப்பும் இனிப்பும் அன்பும் நிறைந்த ஒரு அழகான பிறந்தநாளாக அமையட்டும். 🎈","Today is your day, {n}! May it be a beautiful birthday filled with smiles, sweets and love. 🎈"]
+["இன்று உங்கள் நாள், {n}! சிரிப்பும் இனிப்பும் அன்பும் நிறைந்த ஒரு அழகான பிறந்தநாளாக அமையட்டும். 🎈","Today is your day, {n}! May it be a beautiful birthday filled with smiles, sweets and love. 🎈"],
+["{n}, இன்று உங்கள் பிறந்தநாள்! உங்கள் முகத்தில் புன்னகையும் மனதில் நிம்மதியும் எப்போதும் நிலைக்கட்டும். 😊","{n}, today is your birthday! May a smile always stay on your face and peace in your heart. 😊"],
+["இன்று போல என்றும் இனிமையாக வாழ, இறைவன் உங்களுக்கு நல்ல ஆரோக்கியம் தரட்டும், {n}. பிறந்தநாள் வாழ்த்துகள்! 🌺","May God grant you good health to live as sweetly as today forever, {n}. Happy Birthday! 🌺"],
+["வயது ஒரு எண் மட்டுமே; மனம் இளமையாக இருந்தால் வாழ்க்கை எப்போதும் அழகு. இனிய பிறந்தநாள், {n}! 🎈","Age is only a number; if the heart stays young, life is always beautiful. Happy Birthday, {n}! 🎈"],
+["உங்கள் அன்பான மனதிற்கும் உதவும் குணத்திற்கும் இந்தப் பிறந்தநாளில் எங்கள் நன்றியும் வாழ்த்தும், {n}. 💐","On this birthday, our thanks and wishes for your loving heart and helpful nature, {n}. 💐"],
+["புதிய வயது, புதிய நம்பிக்கை, புதிய வெற்றிகள்; எல்லாம் உங்களுக்காகக் காத்திருக்கின்றன, {n}. இனிய பிறந்தநாள்! 🌟","A new age, new hope, new victories; all are waiting for you, {n}. Happy Birthday! 🌟"],
+["இந்த நாளில் உங்களுக்குப் பிடித்த எல்லாமும் உங்களைத் தேடி வரட்டும், {n}. பிறந்தநாள் நல்வாழ்த்துகள்! 🎂","May everything you love come looking for you on this day, {n}. Happy Birthday! 🎂"],
+["நல்ல நண்பராக, நல்ல மனிதராக வாழும் உங்களுக்கு இனிய பிறந்தநாள் வாழ்த்துகள், {n}! 🤝","Happy Birthday to you, {n}, who lives as a good friend and a good human being! 🤝"],
+["கடந்த வருடத்தை விட இந்த வருடம் இன்னும் இனிமையாக அமைய வாழ்த்துகிறோம், {n}. 🎉","We wish that this year turns out even sweeter than the last, {n}. 🎉"],
+["{n}, உங்கள் உழைப்புக்கு ஏற்ற பலனும் குடும்பத்தின் அன்பும் இந்த வருடம் முழுவதும் கிடைக்கட்டும். இனிய பிறந்தநாள்! 🏡","{n}, may you receive rewards equal to your hard work and your family's love throughout this year. Happy Birthday! 🏡"],
+["இறைவன் உங்களுக்கு மனநிம்மதியோடு கூடிய நீண்ட ஆயுளைத் தரட்டும், {n}. பிறந்தநாள் வாழ்த்துகள்! 🙏","May God grant you a long life along with peace of mind, {n}. Happy Birthday! 🙏"],
+["இன்றைய நாள் உங்களுக்கு மட்டுமே சொந்தம், {n}! மனதார மகிழுங்கள், இனிப்புச் சாப்பிடுங்கள், சிரியுங்கள். 🍰","Today belongs only to you, {n}! Enjoy wholeheartedly, eat something sweet and laugh. 🍰"],
+["உங்கள் வாழ்வில் ஒவ்வொரு நாளும் இந்தப் பிறந்தநாளைப் போல மகிழ்ச்சி நிறைந்ததாக அமையட்டும், {n}. ✨","May every day of your life be as joyful as this birthday, {n}. ✨"],
+["{n}, உங்கள் இதயத்தின் நல்ல ஆசைகள் எல்லாம் இந்த வருடம் நிறைவேறட்டும். இனிய பிறந்தநாள் வாழ்த்துகள்! 🌈","{n}, may all the good wishes of your heart come true this year. Happy Birthday! 🌈"],
+["சிரிப்பால் சுற்றியுள்ளவர்களையும் மகிழ்விக்கும் உங்களுக்கு, இன்று உலகமே சிரிக்கட்டும், {n}! பிறந்தநாள் வாழ்த்துகள். 😄","To you who cheers up everyone with your smile, may the whole world smile today, {n}! Happy Birthday. 😄"],
+["ஆரோக்கியம், அமைதி, ஆனந்தம் இந்த மூன்றும் உங்கள் வாழ்வில் நிறையட்டும், {n}. இனிய பிறந்தநாள்! 🌿","May health, peace and joy fill your life, {n}. Happy Birthday! 🌿"],
+["இந்த உலகிற்கு நீங்கள் கிடைத்தது எங்களுக்குப் பெரிய வரம், {n}. இனிய பிறந்தநாள் நல்வாழ்த்துகள்! 🎁","Having you in this world is a great blessing for us, {n}. Happy Birthday! 🎁"],
+["புதிய ஆண்டு உங்களுக்குப் புதிய வாய்ப்புகளையும் நல்ல செய்திகளையும் தரட்டும், {n}. இனிய பிறந்தநாள்! 🔔","May the new year bring you new opportunities and good news, {n}. Happy Birthday! 🔔"],
+["உங்கள் நல்ல மனதிற்கு இறைவன் எல்லா நலன்களையும் அளிக்கட்டும், {n}. பிறந்தநாள் நல்வாழ்த்துகள்! 🌷","May God bestow every blessing on your good heart, {n}. Happy Birthday! 🌷"],
+["{n}, வெற்றியும் மகிழ்ச்சியும் இரட்டையர்கள் போல உங்களுடன் எப்போதும் இருக்கட்டும். இனிய பிறந்தநாள்! 🏆","{n}, may success and happiness stay with you always like twins. Happy Birthday! 🏆"]
 ];
 const AW=[
 ["இனிய திருமண நாள் வாழ்த்துகள், {n}! உங்கள் அன்பும் ஒற்றுமையும் எப்போதும் தொடரட்டும். 💞","Happy Wedding Anniversary, {n}! May your love and togetherness always continue. 💞"],
 ["{n}, உங்கள் இல்லறம் மகிழ்ச்சியும் நிம்மதியும் நிறைந்து செழிக்க மனமார வாழ்த்துகிறோம். 💐","{n}, we heartily wish your married life flourishes with happiness and peace. 💐"],
 ["ஒருவருக்கொருவர் துணையாக இன்னும் பல ஆண்டுகள் இனிதே வாழ வாழ்த்துகள், {n}! திருமண நாள் நல்வாழ்த்துகள். 🌹","Wishing you many more years of being each other's support, {n}! Happy Anniversary. 🌹"],
-["இறைவன் அருளால் உங்கள் குடும்பம் எல்லா நலமும் பெற்று வாழ்க, {n}. இனிய திருமண நாள்! 🙏","By God's grace, may your family be blessed with every good thing, {n}. Happy Anniversary! 🙏"]
+["இறைவன் அருளால் உங்கள் குடும்பம் எல்லா நலமும் பெற்று வாழ்க, {n}. இனிய திருமண நாள்! 🙏","By God's grace, may your family be blessed with every good thing, {n}. Happy Anniversary! 🙏"],
+["அன்பால் பிணைந்த உங்கள் இல்லறம் எப்போதும் இனிமையாக இருக்கட்டும், {n}. திருமண நாள் நல்வாழ்த்துகள்! 💖","May your married life, bound by love, always stay sweet, {n}. Happy Wedding Anniversary! 💖"],
+["இன்று போல என்றும் ஒற்றுமையாகவும் மகிழ்ச்சியாகவும் வாழ வாழ்த்துகிறோம், {n}. இனிய திருமண நாள்! 💑","We wish you to live always united and happy like today, {n}. Happy Anniversary! 💑"],
+["{n}, ஒருவரை ஒருவர் புரிந்து கொள்ளும் உங்கள் அன்பே சிறந்த செல்வம். திருமண நாள் வாழ்த்துகள்! 🌸","{n}, your love of understanding each other is the greatest wealth. Happy Anniversary! 🌸"],
+["இன்பத்திலும் துன்பத்திலும் இணைந்து நிற்கும் உங்கள் பந்தம் எல்லோருக்கும் ஒரு முன்மாதிரி, {n}. இனிய திருமண நாள்! 🌟","Your bond that stands together in joy and sorrow is a role model for everyone, {n}. Happy Anniversary! 🌟"],
+["இறைவன் அருளால் உங்கள் குடும்பத்தில் ஆரோக்கியமும் செல்வமும் நிறையட்டும், {n}. திருமண நாள் நல்வாழ்த்துகள்! 🙏","By God's grace, may health and wealth fill your family, {n}. Happy Wedding Anniversary! 🙏"],
+["ஆண்டுகள் கூடக் கூட உங்கள் அன்பும் கூடிக்கொண்டே போகட்டும், {n}. இனிய திருமண நாள் வாழ்த்துகள்! 💞","As the years go by, may your love keep growing, {n}. Happy Wedding Anniversary! 💞"],
+["{n}, உங்கள் இருவரின் புன்னகையும் எப்போதும் இந்த வீட்டில் நிறைந்திருக்கட்டும். திருமண நாள் வாழ்த்துகள்! 😊","{n}, may the smiles of both of you always fill your home. Happy Anniversary! 😊"],
+["உங்கள் திருமண வாழ்வு பூக்கள் நிறைந்த தோட்டமாக மணம் வீசட்டும், {n}. இனிய திருமண நாள்! 🌹","May your married life spread fragrance like a garden full of flowers, {n}. Happy Anniversary! 🌹"],
+["நம்பிக்கையும் அன்பும் உங்கள் வாழ்வின் இரு கண்களாக இருக்கட்டும், {n}. திருமண நாள் நல்வாழ்த்துகள்! 💐","May trust and love be the two eyes of your life, {n}. Happy Wedding Anniversary! 💐"],
+["இன்னும் பல ஆண்டுகள் கைகோர்த்து நடந்து, எல்லா மகிழ்ச்சியையும் அடையுங்கள், {n}. இனிய திருமண நாள்! 🌈","Walk hand in hand for many more years and attain every happiness, {n}. Happy Anniversary! 🌈"],
+["{n}, உங்கள் இல்லத்தில் எப்போதும் அன்பும் அமைதியும் ஒளிரும் விளக்காக இருக்கட்டும். திருமண நாள் வாழ்த்துகள்! 🪔","{n}, may love and peace always glow like a lamp in your home. Happy Anniversary! 🪔"],
+["ஒருவருக்கொருவர் துணையாகவும் தோழமையாகவும் வாழும் உங்களுக்கு இனிய திருமண நாள் நல்வாழ்த்துகள், {n}! 🤝","Happy Wedding Anniversary to you, {n}, who live as each other's support and companion! 🤝"],
+["{n}, உங்கள் இருவரின் ஒற்றுமையே உங்கள் குடும்பத்தின் பெரிய பலம். இனிய திருமண நாள் வாழ்த்துகள்! 🏡","{n}, the unity of both of you is your family's greatest strength. Happy Anniversary! 🏡"]
 ];
 function hashStr(t){let h=0;for(const ch of t)h=(h*31+ch.charCodeAt(0))>>>0;return h}
-function wishFor(ev){
- const b=ev.t==="b",list=b?BW:AW,w=list[hashStr(ev.n+new Date().getFullYear())%list.length],nm=ev.n.trim();
+function wishFor(ev,shift){
+ const b=ev.t==="b",list=b?BW:AW,nm=ev.n.trim(),w=list[(hashStr(nm)+new Date().getFullYear()*7+(shift||0))%list.length];
  return{ta:(b?"பிறந்தநாள் வாழ்த்துகள், ":"திருமண நாள் வாழ்த்துகள், ")+nm+"!",en:(b?"HAPPY BIRTHDAY, ":"HAPPY ANNIVERSARY, ")+nm.toUpperCase()+"!",item:[w[0].split("{n}").join(nm),w[1].split("{n}").join(nm)],fest:true,bright:true};
 }
 function wishText(w){const ft=footerText(),G=langInfo();const body=(G.ta?"*"+w.ta+"*\n"+w.item[0]:"")+(G.ta&&G.en?"\n\n":"")+(G.en?"*"+w.en+"*\n"+w.item[1]:"");return"🎉 ━━━━━━━━━━━━━━\n\n"+body+(ft?"\n\n━━━━━━━━━━━━━━\n🙏 *"+ft+"*":"")}
-let curWish=null;
-function openWish(ev){curWish=wishFor(ev);$("wishTitle").textContent=(ev.t==="b"?"🎂 ":"💑 ")+ev.n;$("wishArea").value=wishText(curWish);showSheet("wish")}
+let curWish=null,curEv=null,wishShift=0;
+function openWish(ev){curEv=ev;wishShift=0;curWish=wishFor(ev,0);$("wishTitle").textContent=(ev.t==="b"?"🎂 ":"💑 ")+ev.n;$("wishArea").value=wishText(curWish);showSheet("wish")}
 function renderEv(){
  const box=$("evNote"),list=loadEv().filter(isToday);
  box.textContent="";
@@ -612,6 +644,7 @@ $("evAdd").onclick=()=>{
  msg.textContent="";$("evName").value="";$("evDate").value="";renderEvList();renderEv();
 };
 $("wiClose").onclick=closeSheet;
+$("wiNext").onclick=()=>{if(!curEv)return;wishShift++;curWish=wishFor(curEv,wishShift);$("wishArea").value=wishText(curWish)};
 $("wiCopy").onclick=async()=>{const b=$("wiCopy"),ok=await copyText($("wishArea").value);flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
 $("wiShare").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent($("wishArea").value)};
 $("wiImg").onclick=()=>shareImage($("wiImg"),"🖼️ படம் பகிர",curWish);
