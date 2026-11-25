@@ -89,6 +89,7 @@ footer{text-align:center;color:#7b8495;font-size:11px;margin-top:20px}
   <div class="sheet" id="editSheet" style="display:none">
     <h3>✏️ செய்தியைத் திருத்து</h3>
     <textarea id="editArea"></textarea>
+    <div class="row"><button id="edImg" type="button">🖼️ படம் பகிர</button><button id="edSave" type="button">💾 படம் Save</button></div>
     <div class="row"><button id="edCopy" type="button">📋 Copy</button><button id="edShare" type="button">📲 WhatsApp</button><button id="edReset" type="button">↩️ மீட்டமை</button><button id="edClose" type="button">✖ மூடு</button></div>
   </div>
   <div class="sheet" id="favSheet" style="display:none">
@@ -553,7 +554,7 @@ function drawCard(over){
  else{for(let i=0;i<22;i++){const fx=R()*W,fy=1130+R()*(200+bx),gl=x.createRadialGradient(fx,fy,0,fx,fy,16);gl.addColorStop(0,"rgba(255,235,120,1)");gl.addColorStop(1,"rgba(255,235,120,0)");x.fillStyle=gl;x.beginPath();x.arc(fx,fy,16,0,Math.PI*2);x.fill()}}
  // date pill
  const P=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}).formatToParts(now).map(y=>[y.type,y.value]));
- const dt=(over?"":"#"+dayLabel()+"  •  ")+P.weekday+", "+P.day+" "+P.month+" "+P.year;
+ const dt=((over&&!over.num)?"":"#"+dayLabel()+"  •  ")+P.weekday+", "+P.day+" "+P.month+" "+P.year;
  x.font="700 44px "+LAT;const dw=x.measureText(dt).width+84;
  rr(x,540-dw/2,258,dw,66,33);x.fillStyle=M?"rgba(255,255,255,.80)":"rgba(255,255,255,.14)";x.fill();x.lineWidth=2;x.strokeStyle=M?"rgba(230,81,0,.5)":"rgba(255,213,79,.6)";x.stroke();
  x.fillStyle=M?dk(TH.date,.15):TH.date;boldFill(x,dt,540,306,1.4);
@@ -568,7 +569,7 @@ function drawCard(over){
  flower(x,px+14,py+ph-14,40,8,fb[0],fb[1],fb[2]);flower(x,px+pw-14,py+ph-14,40,8,fa[0],fa[1],fa[2]);
  // text
  const ink=TH.ink,tTa=TH.tTa,tEn=M?dk(TH.tEn,.25):TH.tEn,bEn=M?dk(TH.ink,.35):(TH.bEn||TH.ink);
- const LG=langInfo(),both=LG.ta&&LG.en,maxW=pw-120,avail=ph-96,titTa=T.ta,titEn=T.en,bs=both?1:1.25;
+ const LG=(over&&over.lang)?{ta:over.lang!=="en",en:over.lang!=="ta"}:langInfo(),both=LG.ta&&LG.en,maxW=pw-120,avail=ph-96,titTa=T.ta,titEn=T.en,bs=both?1:1.25;
  let L=null;
  for(let sc=1;sc>=.45;sc-=.03){
   const sM=54*bs*sc;
@@ -602,31 +603,58 @@ function drawCard(over){
  return c;
 }
 async function cardBlob(over){const c=drawCard(over);return await new Promise(r=>c.toBlob(r,"image/png"))}
-function cardName(over){return"vanakkam-"+(over?"wish":dayLabel()+"-"+mode)+".png"}
+function cardName(over){return"vanakkam-"+((over&&!over.edit)?"wish":dayLabel()+"-"+mode)+".png"}
 function downloadBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),8000)}
 function flash(b,t,old){b.textContent=t;setTimeout(()=>b.textContent=old,2500)}
 async function shareImage(b,old,over){
  try{
   const blob=await cardBlob(over),file=new File([blob],cardName(over),{type:"image/png"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});if(!over)markSent();return}
-  downloadBlob(blob,cardName(over));if(!over)markSent();flash(b,"✅ படம் Save ஆனது",old);
+  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});if(!over||over.edit)markSent();return}
+  downloadBlob(blob,cardName(over));if(!over||over.edit)markSent();flash(b,"✅ படம் Save ஆனது",old);
  }catch(e){if(e&&e.name==="AbortError")return;console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
 }
 async function saveImage(b,old,over,thenWa){
  try{
-  downloadBlob(await cardBlob(over),cardName(over));if(!over)markSent();flash(b,"✅ Save ஆனது",old);
+  downloadBlob(await cardBlob(over),cardName(over));if(!over||over.edit)markSent();flash(b,"✅ Save ஆனது",old);
   if(thenWa)setTimeout(()=>{try{location.href="whatsapp://"}catch(e){console.warn(e)}},900);
  }catch(e){console.warn(e);flash(b,"📲 மீண்டும் முயற்சிக்கவும்",old)}
 }
 $("imgBtn").onclick=()=>shareImage($("imgBtn"),"🖼️ படமாகப் பகிர");
 $("saveBtn").onclick=()=>saveImage($("saveBtn"),"💾 படம் Save");
 $("saveWaBtn").onclick=()=>saveImage($("saveWaBtn"),"📲 Save செய்து WhatsApp திற",undefined,true);
+
+/* ---- poster from the edited message text ---- */
+function parseEdited(txt){
+ const R={taTitle:"",ta:"",enTitle:"",en:""};let prev="";
+ for(const raw of String(txt).replace(/\r/g,"").split("\n")){
+  const l=raw.trim();
+  if(!l)continue;
+  if(/^\S{0,4}\s*[━─\-_=]{4,}$/u.test(l))continue;       // divider lines
+  if(/^[🌅🌙🎉]\s*\*#\d+\*/u.test(l))continue;            // header: emoji *#008* | date | time
+  if(l.indexOf("🙏")===0)continue;                        // footer name (poster uses Settings)
+  const m=l.match(/^\*(.+?)\*$/),text=(m?m[1]:l).replace(/\*/g,"").trim();
+  if(!text)continue;
+  const nT=(text.match(/[\u0B80-\u0BFF]/g)||[]).length,nL=(text.match(/[A-Za-z]/g)||[]).length;
+  const lang=(nT===0&&nL===0)?(prev||"ta"):(nT===nL?(prev||"ta"):(nT>nL?"ta":"en"));
+  prev=lang;
+  if(m&&!R[lang+"Title"]&&!R[lang])R[lang+"Title"]=text;
+  else R[lang]=(R[lang]?R[lang]+" ":"")+text;
+ }
+ return R;
+}
+function editedOver(){
+ const T0=titles(),P=parseEdited($("editArea").value);
+ if(!P.ta&&!P.en)return null;
+ return{ta:P.taTitle||T0.ta,en:P.enTitle||T0.en,item:[P.ta,P.en],fest:T0.fest,num:true,edit:true,lang:(P.ta&&P.en)?"both":(P.ta?"ta":"en")};
+}
 function showSheet(w){$("ov").style.display="flex";for(const k of["edit","set","wish","ev","fav"])$(k+"Sheet").style.display=k===w?"block":"none"}
 function closeSheet(){$("ov").style.display="none"}
 $("ov").onclick=e=>{if(e.target===$("ov"))closeSheet()};
 $("editBtn").onclick=()=>{$("editArea").value=makeMessage();showSheet("edit")};
 $("edReset").onclick=()=>{$("editArea").value=makeMessage()};
 $("edClose").onclick=closeSheet;
+$("edImg").onclick=()=>{const o=editedOver();if(!o){flash($("edImg"),"எழுத்து இல்லை","🖼️ படம் பகிர");return}shareImage($("edImg"),"🖼️ படம் பகிர",o)};
+$("edSave").onclick=()=>{const o=editedOver();if(!o){flash($("edSave"),"எழுத்து இல்லை","💾 படம் Save");return}saveImage($("edSave"),"💾 படம் Save",o)};
 $("edCopy").onclick=async()=>{const b=$("edCopy"),ok=await copyText($("editArea").value);if(ok)markSent();flash(b,ok?"✅ Copied":"📲 WhatsApp பொத்தானைப் பயன்படுத்தவும்","📋 Copy")};
 $("edShare").onclick=()=>{markSent();location.href="https://wa.me/?text="+encodeURIComponent($("editArea").value)};
 function fillSettings(){const s=loadSet();$("setName").value=s.name;$("setCity").value=s.city;$("setFoot").checked=s.foot;$("setSize").value=s.sz;$("setLang").value=s.lang;$("setMsg").textContent=""}
